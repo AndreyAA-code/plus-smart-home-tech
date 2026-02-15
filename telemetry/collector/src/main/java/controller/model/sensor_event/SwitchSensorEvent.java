@@ -1,6 +1,7 @@
 package controller.model.sensor_event;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -8,6 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 public class SwitchSensorEvent extends SensorEvent {
+    @NonNull
     private boolean state;
 
     @Override
