@@ -1,4 +1,4 @@
-package controller.model.sensor_event;
+package ru.practicum.model.sensor_event;
 
 import lombok.Getter;
 import lombok.NonNull;

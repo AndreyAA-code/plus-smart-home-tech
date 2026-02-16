@@ -1,4 +1,4 @@
-package controller.model.sensor_event;
+package ru.practicum.model.sensor_event;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -8,18 +8,17 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ClimateSensorEvent extends SensorEvent {
+public class MotionSensorEvent extends SensorEvent {
     @NonNull
-    private int temperatureC;
+    private int linkQuality;
     @NonNull
-    private int humidity;
+    private boolean motion;
     @NonNull
-    private int co2Level;
+    private int voltage;
 
     @Override
     public SensorEventType getType() {
-        return SensorEventType.CLIMATE_SENSOR_EVENT;
+        return SensorEventType.MOTION_SENSOR_EVENT;
     }
 
 }
-

@@ -1,4 +1,4 @@
-package controller.model.sensor_event;
+package ru.practicum.model.sensor_event;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

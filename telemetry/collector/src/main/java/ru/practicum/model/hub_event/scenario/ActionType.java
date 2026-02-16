@@ -1,4 +1,4 @@
-package controller.model.hub_event.scenario;
+package ru.practicum.model.hub_event.scenario;
 
 public enum ActionType {
     ACTIVATE,

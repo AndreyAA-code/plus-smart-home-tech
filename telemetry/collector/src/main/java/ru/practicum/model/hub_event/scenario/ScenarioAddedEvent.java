@@ -1,8 +1,10 @@
-package controller.model.hub_event.scenario;
+package ru.practicum.model.hub_event.scenario;
 
 
-import controller.model.hub_event.*;
-import controller.model.hub_event.DeviceType;
+import ru.practicum.model.hub_event.HubEvent;
+import ru.practicum.model.hub_event.HubEventType;
+import ru.practikum.model.hub_event.*;
+import ru.practicum.model.hub_event.DeviceType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

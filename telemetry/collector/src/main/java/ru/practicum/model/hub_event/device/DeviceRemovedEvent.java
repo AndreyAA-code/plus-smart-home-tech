@@ -1,8 +1,8 @@
-package controller.model.hub_event.device;
+package ru.practicum.model.hub_event.device;
 
 
-import controller.model.hub_event.HubEvent;
-import controller.model.hub_event.HubEventType;
+import ru.practicum.model.hub_event.HubEvent;
+import ru.practicum.model.hub_event.HubEventType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;

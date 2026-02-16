@@ -1,4 +1,4 @@
-package controller.model.hub_event;
+package ru.practicum.model.hub_event;
 
 public enum HubEventType {
     DEVICE_ADDED,
