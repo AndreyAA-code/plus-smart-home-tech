@@ -38,6 +38,7 @@ public class EventController {
         if (sensorEventHandler == null) {
             throw new IllegalArgumentException("Не могу найти обработчик для типа: " + request.getType());
         }
+        sensorEventHandler.handle(request);
     }
 
     @PostMapping("/hubs")
@@ -47,5 +48,6 @@ public class EventController {
         if (hubEventHandler == null) {
             throw new IllegalArgumentException("Не могу найти обработчик для типа: " + request.getType());
         }
+        hubEventHandler.handle(request);
     }
 }
