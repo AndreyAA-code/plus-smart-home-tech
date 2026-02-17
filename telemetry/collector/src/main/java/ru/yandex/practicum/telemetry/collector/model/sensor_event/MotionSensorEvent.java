@@ -12,7 +12,7 @@ public class MotionSensorEvent extends SensorEvent {
     @NonNull
     private int linkQuality;
     @NonNull
-    private boolean motion;
+    private Boolean motion;
     @NonNull
     private int voltage;
 

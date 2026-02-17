@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.service;
+package ru.yandex.practicum.telemetry.collector.service.hub;
 
 
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaClientProducer;
 import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEvent;
+import ru.yandex.practicum.telemetry.collector.service.hub.HubEventHandler;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.service;
+package ru.yandex.practicum.telemetry.collector.service.sensor;
 
 import ru.yandex.practicum.telemetry.collector.model.sensor_event.SensorEvent;
 import ru.yandex.practicum.telemetry.collector.model.sensor_event.SensorEventType;

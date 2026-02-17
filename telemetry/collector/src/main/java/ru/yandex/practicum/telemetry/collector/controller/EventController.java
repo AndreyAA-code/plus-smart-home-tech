@@ -8,8 +8,8 @@ import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEvent;
 import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEventType;
 import ru.yandex.practicum.telemetry.collector.model.sensor_event.SensorEvent;
 import ru.yandex.practicum.telemetry.collector.model.sensor_event.SensorEventType;
-import ru.yandex.practicum.telemetry.collector.service.HubEventHandler;
-import ru.yandex.practicum.telemetry.collector.service.SensorEventHandler;
+import ru.yandex.practicum.telemetry.collector.service.hub.HubEventHandler;
+import ru.yandex.practicum.telemetry.collector.service.sensor.SensorEventHandler;
 
 import java.util.List;
 import java.util.Map;

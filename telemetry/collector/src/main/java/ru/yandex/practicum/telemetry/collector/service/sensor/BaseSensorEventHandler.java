@@ -7,7 +7,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaClientProducer;
-import ru.yandex.practicum.telemetry.collector.model.sensor.SensorEvent;
+import ru.yandex.practicum.telemetry.collector.model.sensor_event.SensorEvent;
+import ru.yandex.practicum.telemetry.collector.service.sensor.SensorEventHandler;
 
 @Slf4j
 @RequiredArgsConstructor

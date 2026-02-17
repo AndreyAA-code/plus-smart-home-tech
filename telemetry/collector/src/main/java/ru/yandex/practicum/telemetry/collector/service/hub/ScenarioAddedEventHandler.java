@@ -8,11 +8,11 @@ import ru.yandex.practicum.kafka.telemetry.event.DeviceActionAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioConditionAvro;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaClientProducer;
-import ru.yandex.practicum.telemetry.collector.model.hub.HubEvent;
-import ru.yandex.practicum.telemetry.collector.model.hub.HubEventType;
-import ru.yandex.practicum.telemetry.collector.model.hub.scenario.DeviceAction;
-import ru.yandex.practicum.telemetry.collector.model.hub.scenario.ScenarioAddedEvent;
-import ru.yandex.practicum.telemetry.collector.model.hub.scenario.ScenarioCondition;
+import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEvent;
+import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEventType;
+import ru.yandex.practicum.telemetry.collector.model.hub_event.scenario.DeviceAction;
+import ru.yandex.practicum.telemetry.collector.model.hub_event.scenario.ScenarioAddedEvent;
+import ru.yandex.practicum.telemetry.collector.model.hub_event.scenario.ScenarioCondition;
 
 @Component
 public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAddedEventAvro> {
@@ -37,8 +37,8 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
     private ScenarioConditionAvro mapToConditionAvro(ScenarioCondition scenarioCondition) {
 
         return ScenarioConditionAvro.newBuilder()
-                .setSensorId(scenarioCondition.getSensorId())
-                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().name()))
+                .setSensorId(scenarioCondition.getSensor_id())
+                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getCondition().name()))
                 .setType(ConditionTypeAvro.valueOf(scenarioCondition.getType().name()))
                 .setValue(scenarioCondition.getValue())
                 .build();
@@ -52,7 +52,7 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
             case DEACTIVATE -> ActionTypeAvro.DEACTIVATE;
         };
         return DeviceActionAvro.newBuilder()
-                .setSensorId(deviceAction.getSensorId())
+                .setSensorId(deviceAction.getSensor_id())
                 .setType(ActionTypeAvro.valueOf(deviceAction.getType().name()))
                 .setValue(deviceAction.getValue())
                 .build();
