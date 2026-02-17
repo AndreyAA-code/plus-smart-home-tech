@@ -5,16 +5,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Value;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaClientProducer;
 import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEvent;
-import ru.yandex.practicum.telemetry.collector.service.hub.HubEventHandler;
 
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseHubEventHandler<T extends SpecificRecordBase> implements HubEventHandler {
     protected final KafkaClientProducer producer;
 
+    @Value("${kafka.topic.hub}")
     protected String topic;
 
     protected abstract T mapToAvro(HubEvent event);
