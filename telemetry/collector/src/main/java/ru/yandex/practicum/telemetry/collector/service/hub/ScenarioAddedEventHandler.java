@@ -37,8 +37,8 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
     private ScenarioConditionAvro mapToConditionAvro(ScenarioCondition scenarioCondition) {
 
         return ScenarioConditionAvro.newBuilder()
-                .setSensorId(scenarioCondition.getSensor_id())
-                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getCondition().name()))
+                .setSensorId(scenarioCondition.getSensorId())
+                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().name()))
                 .setType(ConditionTypeAvro.valueOf(scenarioCondition.getType().name()))
                 .setValue(scenarioCondition.getValue())
                 .build();
@@ -52,8 +52,8 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
             case DEACTIVATE -> ActionTypeAvro.DEACTIVATE;
         };
         return DeviceActionAvro.newBuilder()
-                .setSensorId(deviceAction.getSensor_id())
-                .setType(ActionTypeAvro.valueOf(deviceAction.getType().name()))
+                .setSensorId(deviceAction.getSensorId())
+                .setType(actionTypeAvro)
                 .setValue(deviceAction.getValue())
                 .build();
     }

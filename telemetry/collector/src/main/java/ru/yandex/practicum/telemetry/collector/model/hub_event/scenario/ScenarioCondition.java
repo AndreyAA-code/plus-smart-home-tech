@@ -8,8 +8,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ScenarioCondition {
-    private String sensor_id;
+    private String sensorId;
     private ConditionType type;
-    private ConditionOperations condition;
-    private int value;
+    private ConditionOperation operation;
+    private Integer value;
 }
