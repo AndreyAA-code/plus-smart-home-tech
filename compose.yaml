@@ -17,13 +17,23 @@ services:
       KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
       CLUSTER_ID: 'K0EA9p0yEe6MkAAAAkKsEg'
 
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - smart-home-network
+
   kafka-init-topics:
     image: confluentinc/confluent-local:7.4.3
     container_name: kafka-init-topics
     depends_on:
       - kafka
     command: "bash -c \
-                'kafka-topics --create --topic telemetry.sensors.v1 \
+                'echo \"Ожидаем готовность Kafka...30 sec\" && \
+                sleep 30 && \
+                echo \"Kafka готова, создаем топики...\" && \
+                kafka-topics --create --topic telemetry.sensors.v1 \
                              --partitions 1 --replication-factor 1 --if-not-exists \
                              --bootstrap-server kafka:29092 && \
                 kafka-topics --create --topic telemetry.snapshots.v1 \
@@ -31,5 +41,27 @@ services:
                              --bootstrap-server kafka:29092 && \
                 kafka-topics --create --topic telemetry.hubs.v1 \
                              --partitions 1 --replication-factor 1 --if-not-exists \
-                             --bootstrap-server kafka:29092'"
+                             --bootstrap-server kafka:29092 && \
+                echo \"Топики успешно созданы!\"'"
     init: true
+    networks:
+      - smart-home-network
+
+  collector:
+    build:
+      context: ./telemetry/collector
+      dockerfile: Dockerfile
+    container_name: collector
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    depends_on:
+      kafka-init-topics:
+        condition: service_completed_successfully
+    networks:
+      - smart-home-network
+
+networks:
+  smart-home-network:
+    driver: bridge
