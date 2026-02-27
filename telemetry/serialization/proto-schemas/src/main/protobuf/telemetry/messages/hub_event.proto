@@ -83,8 +83,3 @@ message ScenarioAddedEventProto {
 message ScenarioRemovedEventProto {
   string name = 1;
 }
-
-service CollectorController {
-  rpc CollectHubEvent (HubEventProto)
-      returns (HubEventProto);
-}
