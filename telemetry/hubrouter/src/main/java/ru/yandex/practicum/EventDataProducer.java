@@ -34,7 +34,7 @@ public class EventDataProducer {
       log.info("Получил ответ от коллектора: {}", response);
    }
 
-   private SensorEventProto createTemperatureSensorEvent(... sensor) {
+   private SensorEventProto createTemperatureSensorEvent(SensorConfig.TemperatureSensor sensor) {
       int temperatureCelsius = getRandomSensorValue(sensor.getTemperature());
       int temperatureFahrenheit = (int) (temperatureCelsius * 1.8 + 32);
       Instant ts = Instant.now();
