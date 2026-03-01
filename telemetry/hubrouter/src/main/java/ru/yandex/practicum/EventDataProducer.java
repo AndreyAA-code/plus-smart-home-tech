@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc.CollectorControllerBlockingStub;
+
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorResponse;
+import ru.yandex.practicum.grpc.telemetry.event.*;
+
+import ru.yandex.practicum.grpc.telemetry.event.*;
 
 import java.time.Instant;
 import java.util.Random;
@@ -45,8 +48,9 @@ public class EventDataProducer {
               .setTimestamp(Timestamp.newBuilder()
                       .setSeconds(ts.getEpochSecond())
                       .setNanos(ts.getNano())
-              ).setTemperatureSensorEvent(
-                      TemperatureSensorEvent.newBuilder()
+                      .build()
+              ).setTemperatureSensor(
+                      TemperatureSensorProto.newBuilder()
                               .setTemperatureC(temperatureCelsius)
                               .setTemperatureF(temperatureFahrenheit)
                               .build()
@@ -54,4 +58,9 @@ public class EventDataProducer {
               .build();
    }
 
+    private int getRandomSensorValue(SensorConfig.Range range) {
+        if (range == null) return 0;
+        return range.getMinValue() +
+                random.nextInt(range.getMaxValue() - range.getMinValue() + 1);
+    }
 }
