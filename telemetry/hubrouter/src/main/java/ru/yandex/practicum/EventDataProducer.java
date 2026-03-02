@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 
-import ru.yandex.practicum.grpc.telemetry.collector.CollectorResponse;
 import ru.yandex.practicum.grpc.telemetry.event.*;
 
 import java.time.Instant;
@@ -31,8 +30,8 @@ public class EventDataProducer {
 
     private void sendEvent(SensorEventProto event) {
       log.info("Отправляю данные: {}", event.getAllFields());
-      CollectorResponse response = collectorStub.collectSensorEvent(event);
-      log.info("Получил ответ от коллектора: {}", response);
+      collectorStub.collectSensorEvent(event);
+      log.info("Получил Empty ответ от коллектора");
    }
 
    private SensorEventProto createMotionSensorEvent(SensorConfig.MotionSensor sensor) {
