@@ -26,6 +26,6 @@ public class DeviceRemovedEventHandler extends BaseHubEventHandler<DeviceRemoved
 
     @Override
     public HubEventProto.PayloadCase getMessageType() {
-        return HubEventProto.PayloadCase.DEVICE_ADDED;
+        return HubEventProto.PayloadCase.DEVICE_REMOVED;
     }
 }

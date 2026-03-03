@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @GrpcService
-@RequiredArgsConstructor
 public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
     private final Map<SensorEventProto.PayloadCase, SensorEventHandler> sensorEventHandlers;
@@ -36,6 +35,9 @@ public class EventController extends CollectorControllerGrpc.CollectorController
                 ));
         this.hubEventHandlers = hubEventHandlers.stream()
                 .collect(Collectors.toMap(HubEventHandler::getMessageType, Function.identity()));
+
+        log.info("Зарегистрировано обработчиков: сенсоров - {}, хабов - {}",
+                this.sensorEventHandlers.size(), this.hubEventHandlers.size());
     }
 
     /**
