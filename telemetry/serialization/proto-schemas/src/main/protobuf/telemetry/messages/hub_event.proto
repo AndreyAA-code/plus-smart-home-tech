@@ -77,7 +77,7 @@ message DeviceRemovedEventProto {
 message ScenarioAddedEventProto {
   string name = 1;
   repeated ScenarioConditionProto conditions = 2;
-  repeated DeviceActionProto action = 3;
+  repeated DeviceActionProto actions = 3;
 }
 
 message ScenarioRemovedEventProto {

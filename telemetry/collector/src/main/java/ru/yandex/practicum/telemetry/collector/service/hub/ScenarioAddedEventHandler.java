@@ -1,8 +1,10 @@
 package ru.yandex.practicum.telemetry.collector.service.hub;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.grpc.telemetry.event.DeviceActionProto;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.ScenarioAddedEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.ScenarioConditionProto;
 import ru.yandex.practicum.kafka.telemetry.event.ActionTypeAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ConditionOperationAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ConditionTypeAvro;
@@ -30,28 +32,34 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
                 .setConditions(scenarioAddedEvent.getConditionsList().stream()
                         .map(this::mapToConditionAvro)
                         .toList())
-                .setActions(scenarioAddedEvent.getActionList().stream()
+                .setActions(scenarioAddedEvent.getActionsList().stream()
                         .map(this::mapToActionAvro)
                         .toList())
                 .build();
     }
 
-    private ScenarioConditionAvro mapToConditionAvro(ScenarioCondition scenarioCondition) {
-
+    private ScenarioConditionAvro mapToConditionAvro(ScenarioConditionProto scenarioCondition) {
+        Object value = switch (scenarioCondition.getValueCase()) {
+            case BOOL_VALUE -> scenarioCondition.getBoolValue();
+            case INT_VALUE -> scenarioCondition.getIntValue();
+            case VALUE_NOT_SET -> throw new IllegalArgumentException("Condition. Value not set.");
+        };
         return ScenarioConditionAvro.newBuilder()
                 .setSensorId(scenarioCondition.getSensorId())
-                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().name()))
+                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getCondition().name()))
                 .setType(ConditionTypeAvro.valueOf(scenarioCondition.getType().name()))
-                .setValue(scenarioCondition.getValue())
+                .setValue(value)
                 .build();
     }
 
-    private DeviceActionAvro mapToActionAvro(DeviceAction deviceAction) {
+    private DeviceActionAvro mapToActionAvro(DeviceActionProto deviceAction) {
         ActionTypeAvro actionTypeAvro = switch (deviceAction.getType()) {
             case INVERSE -> ActionTypeAvro.INVERSE;
             case ACTIVATE -> ActionTypeAvro.ACTIVATE;
             case SET_VALUE -> ActionTypeAvro.SET_VALUE;
             case DEACTIVATE -> ActionTypeAvro.DEACTIVATE;
+            default -> throw new IllegalArgumentException(
+                    "Неизвестное действие: " + deviceAction.getType());
         };
         return DeviceActionAvro.newBuilder()
                 .setSensorId(deviceAction.getSensorId())
@@ -62,6 +70,6 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
 
     @Override
     public HubEventProto.PayloadCase getMessageType() {
-        return HubEventProto.PayloadCase.DEVICE_ADDED;
+        return HubEventProto.PayloadCase.SCENARIO_ADDED;
     }
 }
