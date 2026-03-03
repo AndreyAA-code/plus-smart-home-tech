@@ -4,7 +4,6 @@ import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
@@ -74,7 +73,8 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     @Override
     public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
         try {
-            // проверяем, есть ли обработчик для полученного события
+            log.info("Получен SensorEvent. PayloadCase: {}, ID: {}, HubId: {}",  request.getPayloadCase(), request.getHubId(), request.getHubId());
+                    // проверяем, есть ли обработчик для полученного события
             if (hubEventHandlers.containsKey(request.getPayloadCase())) {
                 // если обработчик найден, передаём событие ему на обработку
                 hubEventHandlers.get(request.getPayloadCase()).handle(request);

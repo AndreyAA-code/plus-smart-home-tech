@@ -6,9 +6,6 @@ import ru.yandex.practicum.grpc.telemetry.event.DeviceAddedEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceTypeAvro;
-import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEvent;
-import ru.yandex.practicum.telemetry.collector.model.hub_event.HubEventType;
-import ru.yandex.practicum.telemetry.collector.model.hub_event.device.DeviceAddedEvent;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaClientProducer;
 
 @Component
