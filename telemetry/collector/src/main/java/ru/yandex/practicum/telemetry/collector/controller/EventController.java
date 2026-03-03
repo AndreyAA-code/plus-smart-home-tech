@@ -1,10 +1,10 @@
 package ru.yandex.practicum.telemetry.collector.controller;
 
-
 import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @GrpcService
-public class EventController
-        extends CollectorControllerGrpc.CollectorControllerImplBase {
+@RequiredArgsConstructor
+public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
     private final Map<SensorEventProto.PayloadCase, SensorEventHandler> sensorEventHandlers;
 
@@ -47,6 +47,7 @@ public class EventController
             if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
                 // если обработчик найден, передаём событие ему на обработку
                 sensorEventHandlers.get(request.getPayloadCase()).handle(request);
+                log.debug("Событие успешно обработано: {}", request.getId());
             } else {
                 throw new IllegalArgumentException("Не могу найти обработчик для события " + request.getPayloadCase());
             }
@@ -56,7 +57,9 @@ public class EventController
             // и завершаем обработку запроса
             responseObserver.onCompleted();
         } catch (Exception e) {
+            log.error("Ошибка при обработке события: {}", e.getMessage(), e);
             // в случае исключения отправляем ошибку клиенту
+
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
         }
     }
