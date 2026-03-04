@@ -51,6 +51,12 @@
             <artifactId>grpc-stub</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>3.25.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>
