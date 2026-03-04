@@ -1,0 +1,10 @@
+[INFO] +- io.grpc:grpc-protobuf:jar:1.63.0:compile
+[INFO] |  +- com.google.protobuf:protobuf-java:jar:3.25.1:compile
+[INFO] |  \- io.grpc:grpc-protobuf-lite:jar:1.63.0:runtime
+[INFO] +- io.grpc:grpc-protobuf:jar:1.63.0:compile
+[INFO] |  +- com.google.protobuf:protobuf-java:jar:3.25.1:compile
+[INFO] |  \- io.grpc:grpc-protobuf-lite:jar:1.63.0:runtime
+[INFO] \- com.google.protobuf:protobuf-java-util:jar:3.23.4:compile
+[INFO] +- io.grpc:grpc-protobuf:jar:1.63.0:compile
+[INFO] |  +- com.google.protobuf:protobuf-java:jar:3.25.1:compile
+[INFO] |  \- io.grpc:grpc-protobuf-lite:jar:1.63.0:runtime
