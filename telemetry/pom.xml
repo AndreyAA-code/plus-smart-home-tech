@@ -16,6 +16,18 @@
         <module>serialization</module>
         <module>collector</module>
         <module>hubrouter</module>
+        <module>aggregator</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
