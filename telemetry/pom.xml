@@ -18,6 +18,19 @@
         <module>hubrouter</module>
         <module>aggregator</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ru.yandex.practicum</groupId>
+                <artifactId>smart-home-tech</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.kafka</groupId>
