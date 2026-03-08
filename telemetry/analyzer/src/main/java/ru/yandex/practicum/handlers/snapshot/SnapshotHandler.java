@@ -4,7 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.client.ScenarioActionProducer;
-import ru.yandex.practicum.kafka.telemetry.event.*;
+import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ConditionOperationAvro;
+import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorStateAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
 import ru.yandex.practicum.model.Condition;
 import ru.yandex.practicum.model.Scenario;
 import ru.yandex.practicum.repository.ActionRepository;
@@ -24,23 +30,20 @@ public class SnapshotHandler {
     private final ScenarioActionProducer scenarioActionProducer;
 
     public void handle(SensorsSnapshotAvro sensorsSnapshot) {
-        log.info("Обработка снапшота для хаба: {}", sensorsSnapshot.getHubId());
+        log.info("Зашли в метод handleSnapshot");
         Map<String, SensorStateAvro> sensorStateMap = sensorsSnapshot.getSensorsState();
-        
         List<Scenario> scenarios = scenarioRepository.findByHubId(sensorsSnapshot.getHubId());
-        log.info("Найдено {} сценариев для хаба {}", scenarios.size(), sensorsSnapshot.getHubId());
-        
         scenarios.stream()
                 .filter(scenario -> handleScenario(scenario, sensorStateMap))
                 .forEach(scenario -> {
-                    log.info("Сценарий '{}' выполнен, отправляем действия", scenario.getName());
+                    log.info("send actions from scenario with name {}", scenario.getName());
                     sendScenarioActions(scenario);
                 });
     }
 
     private Boolean handleScenario(Scenario scenario, Map<String, SensorStateAvro> sensorStateMap) {
         List<Condition> conditions = conditionRepository.findAllByScenario(scenario);
-        log.debug("Сценарий '{}' содержит {} условий", scenario.getName(), conditions.size());
+        log.info("получили список кондиций {} у сценария name = {}", conditions, scenario.getName());
 
         return conditions.stream().noneMatch(condition -> !checkCondition(condition, sensorStateMap));
     }
@@ -48,14 +51,9 @@ public class SnapshotHandler {
     private Boolean checkCondition(Condition condition, Map<String, SensorStateAvro> sensorStateMap) {
         String sensorId = condition.getSensor().getId();
         SensorStateAvro sensorState = sensorStateMap.get(sensorId);
-        
         if (sensorState == null) {
-            log.debug("Датчик {} не найден в снапшоте", sensorId);
             return false;
         }
-
-        log.debug("Проверка условия для датчика {}, тип {}", sensorId, condition.getType());
-        
         switch (condition.getType()) {
             case LUMINOSITY -> {
                 LightSensorAvro lightSensor = (LightSensorAvro) sensorState.getData();
@@ -81,8 +79,7 @@ public class SnapshotHandler {
                 ClimateSensorAvro climateSensor = (ClimateSensorAvro) sensorState.getData();
                 return handleOperation(condition, climateSensor.getHumidity());
             }
-            default -> {
-                log.warn("Неизвестный тип условия: {}", condition.getType());
+            case null -> {
                 return false;
             }
         }
@@ -91,19 +88,24 @@ public class SnapshotHandler {
     private Boolean handleOperation(Condition condition, Integer currentValue) {
         ConditionOperationAvro operation = condition.getOperation();
         Integer targetValue = condition.getValue();
-        
-        log.debug("Сравнение: текущее={}, операция={}, целевое={}", 
-                currentValue, operation, targetValue);
-        
-        return switch (operation) {
-            case EQUALS -> targetValue.equals(currentValue);
-            case LOWER_THAN -> currentValue < targetValue;
-            case GREATER_THAN -> currentValue > targetValue;
-        };
+        switch (operation) {
+            case EQUALS -> {
+                return targetValue == currentValue;
+            }
+            case LOWER_THAN -> {
+                return currentValue < targetValue;
+            }
+            case GREATER_THAN -> {
+                return currentValue > targetValue;
+            }
+            case null -> {
+                return null;
+            }
+        }
     }
 
     private void sendScenarioActions(Scenario scenario) {
-        log.info("Отправка действий для сценария '{}'", scenario.getName());
+        log.info("Зашли в метод sendScenarioActions");
         actionRepository.findAllByScenario(scenario).forEach(scenarioActionProducer::sendAction);
     }
 }

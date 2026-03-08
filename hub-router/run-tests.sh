@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Определяем текущую ветку
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
