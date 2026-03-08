@@ -24,6 +24,7 @@ else
     exit 1
 fi
 
+
 # 3. Собираем образы Docker на основе docker-compose.yml
 echo "⏳ Шаг 3: Выполняем docker-compose build..."
 if docker-compose build; then
