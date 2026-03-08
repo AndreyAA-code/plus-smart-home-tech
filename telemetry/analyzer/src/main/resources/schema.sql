@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS actions (
     value INTEGER
 );
 
--- создаём таблицу scenario_conditions, связывающую сценарий, датчик и условие активации сценария
+-- создаём таблицу scenario_conditions
 CREATE TABLE IF NOT EXISTS scenario_conditions (
     scenario_id BIGINT REFERENCES scenarios(id),
     sensor_id VARCHAR REFERENCES sensors(id),
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS scenario_conditions (
     PRIMARY KEY (scenario_id, sensor_id, condition_id)
 );
 
--- создаём таблицу scenario_actions, связывающую сценарий, датчик и действие, которое нужно выполнить при активации сценария
+-- создаём таблицу scenario_actions
 CREATE TABLE IF NOT EXISTS scenario_actions (
     scenario_id BIGINT REFERENCES scenarios(id),
     sensor_id VARCHAR REFERENCES sensors(id),
@@ -45,24 +45,25 @@ CREATE TABLE IF NOT EXISTS scenario_actions (
 
 -- создаём функцию для проверки, что связываемые сценарий и датчик работают с одним и тем же хабом
 CREATE OR REPLACE FUNCTION check_hub_id()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS '
 BEGIN
     IF (SELECT hub_id FROM scenarios WHERE id = NEW.scenario_id) != (SELECT hub_id FROM sensors WHERE id = NEW.sensor_id) THEN
-        RAISE EXCEPTION 'Hub IDs do not match for scenario_id % and sensor_id %', NEW.scenario_id, NEW.sensor_id;
+        RAISE EXCEPTION ''Hub IDs do not match for scenario_id % and sensor_id %'', NEW.scenario_id, NEW.sensor_id;
     END IF;
     RETURN NEW;
 END;
-$$
-LANGUAGE plpgsql;
+' LANGUAGE plpgsql;
 
--- создаём триггер, проверяющий, что «условие» связывает корректные сценарий и датчик
-CREATE OR REPLACE TRIGGER tr_bi_scenario_conditions_hub_id_check
+-- создаём триггер для scenario_conditions
+DROP TRIGGER IF EXISTS tr_bi_scenario_conditions_hub_id_check ON scenario_conditions;
+CREATE TRIGGER tr_bi_scenario_conditions_hub_id_check
 BEFORE INSERT ON scenario_conditions
 FOR EACH ROW
 EXECUTE FUNCTION check_hub_id();
 
--- создаём триггер, проверяющий, что «действие» связывает корректные сценарий и датчик
-CREATE OR REPLACE TRIGGER tr_bi_scenario_actions_hub_id_check
+-- создаём триггер для scenario_actions
+DROP TRIGGER IF EXISTS tr_bi_scenario_actions_hub_id_check ON scenario_actions;
+CREATE TRIGGER tr_bi_scenario_actions_hub_id_check
 BEFORE INSERT ON scenario_actions
 FOR EACH ROW
 EXECUTE FUNCTION check_hub_id();
