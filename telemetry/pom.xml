@@ -18,7 +18,6 @@
         <module>hubrouter</module>
         <module>aggregator</module>
         <module>analyzer</module>
-        <module>analyzer</module>
     </modules>
 
     <dependencyManagement>
