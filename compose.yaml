@@ -64,6 +64,22 @@ services:
     networks:
       - smart-home-network
 
+  aggregator:
+    build:
+      context: ./telemetry/aggregator
+      dockerfile: Dockerfile
+    container_name: aggregator
+    ports:
+      - "8086:8080"  # если есть веб-интерфейс
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_BOOTSTRAP_SERVER: kafka:29092
+    depends_on:
+      kafka-init-topics:
+        condition: service_completed_successfully
+    networks:
+      - smart-home-network
+
 networks:
   smart-home-network:
     driver: bridge
