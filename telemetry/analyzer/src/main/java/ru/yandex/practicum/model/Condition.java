@@ -31,4 +31,8 @@ public class Condition {
 
     @Column(name = "value")
     private Integer value;
+
+    @ManyToOne
+    @JoinColumn(name = "sensor_id")
+    private Sensor sensor;
 }

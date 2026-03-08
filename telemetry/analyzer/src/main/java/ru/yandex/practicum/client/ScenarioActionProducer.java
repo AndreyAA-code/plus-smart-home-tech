@@ -22,30 +22,31 @@ public class ScenarioActionProducer {
     public ScenarioActionProducer(
             @GrpcClient("hub-router") HubRouterControllerGrpc.HubRouterControllerBlockingStub hubRouterStub) {
         this.hubRouterStub = hubRouterStub;
-        log.info("ScenarioActionProducer инициализирован с адресом: localhost:59090");
+        log.info("ScenarioActionProducer инициализирован");
     }
 
-    public void sendAction(Action action, String hubId, String scenarioName, String sensorId) {
-        log.info("Отправляем действие в hub-router: hubId={}, scenario={}, sensor={}, type={}, value={}", 
-                hubId, scenarioName, sensorId, action.getType(), action.getValue());
+    public void sendAction(Action action) {
+        log.info("Отправка действия: scenario={}, sensor={}, type={}, value={}",
+                action.getScenario().getName(),
+                action.getSensor().getId(),
+                action.getType(),
+                action.getValue());
 
         try {
-            DeviceActionRequest request = mapToActionRequest(action, hubId, scenarioName, sensorId);
-            log.info("Сформирован запрос: {}", request);
-            
+            DeviceActionRequest request = mapToActionRequest(action);
             Empty response = hubRouterStub.handleDeviceAction(request);
-            log.info("Действие успешно отправлено в hub-router, ответ получен");
+            log.info("Действие успешно отправлено в hub-router");
         } catch (Exception e) {
-            log.error("Ошибка отправки действия в hub-router: {}", e.getMessage(), e);
+            log.error("Ошибка отправки действия в hub-router: {}", e.getMessage());
         }
     }
 
-    private DeviceActionRequest mapToActionRequest(Action action, String hubId, String scenarioName, String sensorId) {
+    private DeviceActionRequest mapToActionRequest(Action action) {
         return DeviceActionRequest.newBuilder()
-                .setHubId(hubId)
-                .setScenarioName(scenarioName)
+                .setHubId(action.getScenario().getHubId())
+                .setScenarioName(action.getScenario().getName())
                 .setAction(DeviceActionProto.newBuilder()
-                        .setSensorId(sensorId)
+                        .setSensorId(action.getSensor().getId())
                         .setType(mapActionType(action.getType()))
                         .setValue(action.getValue() != null ? action.getValue() : 0)
                         .build())
@@ -54,10 +55,7 @@ public class ScenarioActionProducer {
     }
 
     private ActionTypeProto mapActionType(ActionTypeAvro actionType) {
-        log.info("Маппинг типа действия из Avro {} в Proto", actionType);
-        if (actionType == null) {
-            return ActionTypeProto.ACTIVATE;
-        }
+        if (actionType == null) return ActionTypeProto.ACTIVATE;
         return switch (actionType) {
             case ACTIVATE -> ActionTypeProto.ACTIVATE;
             case DEACTIVATE -> ActionTypeProto.DEACTIVATE;
