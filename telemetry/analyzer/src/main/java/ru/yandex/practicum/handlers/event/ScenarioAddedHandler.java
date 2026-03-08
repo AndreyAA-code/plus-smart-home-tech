@@ -9,6 +9,8 @@ import ru.yandex.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
 import ru.yandex.practicum.model.Scenario;
 import ru.yandex.practicum.repository.ScenarioRepository;
 
+import java.util.Optional;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -24,6 +26,15 @@ public class ScenarioAddedHandler implements HubEventHandler {
         
         log.info("Добавляем сценарий '{}' в хаб с hub_id = {}", scenarioName, hubId);
 
+        // Проверяем, существует ли уже такой сценарий
+        Optional<Scenario> existingScenario = scenarioRepository.findByHubIdAndName(hubId, scenarioName);
+        
+        if (existingScenario.isPresent()) {
+            log.info("Сценарий '{}' уже существует для хаба {}, пропускаем", scenarioName, hubId);
+            return;
+        }
+
+        // Если не существует - создаем новый
         Scenario scenario = new Scenario();
         scenario.setHubId(hubId);
         scenario.setName(scenarioName);
