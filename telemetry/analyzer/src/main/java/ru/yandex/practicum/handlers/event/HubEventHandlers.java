@@ -1,5 +1,8 @@
 package ru.yandex.practicum.handlers.event;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
@@ -7,35 +10,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class HubEventHandlers {
-    private final Map<String, HubEventHandler> handlers = new HashMap<>();
+    private final List<HubEventHandler> handlerList;
+    private final Map<String, HubEventHandler> handlerMap = new HashMap<>();
 
-    public HubEventHandlers(List<HubEventHandler> handlerList) {
+    @PostConstruct
+    public void init() {
+        log.info("Регистрация обработчиков событий хаба...");
         for (HubEventHandler handler : handlerList) {
-            // Определяем тип события по классу обработчика
-            String eventType = extractEventType(handler);
-            handlers.put(eventType, handler);
+            String payloadType = handler.getPayloadType();
+            log.info("Зарегистрирован обработчик для типа: {}", payloadType);
+            handlerMap.put(payloadType, handler);
         }
-    }
-
-    private String extractEventType(HubEventHandler handler) {
-        // Возвращает имя класса события, которое обрабатывает этот handler
-        // Например, для DeviceAddedEventHandler вернет "DeviceAddedEventProto"
-        String handlerName = handler.getClass().getSimpleName();
-        if (handlerName.contains("DeviceAdded")) {
-            return "DeviceAddedEventProto";
-        } else if (handlerName.contains("DeviceRemoved")) {
-            return "DeviceRemovedEventProto";
-        } else if (handlerName.contains("ScenarioAdded")) {
-            return "ScenarioAddedEventProto";
-        } else if (handlerName.contains("ScenarioRemoved")) {
-            return "ScenarioRemovedEventProto";
-        }
-        return handlerName.replace("Handler", "");
+        log.info("Всего зарегистрировано обработчиков: {}", handlerMap.size());
     }
 
     public Map<String, HubEventHandler> getHandlers() {
-        return handlers;
+        return handlerMap;
     }
 }
