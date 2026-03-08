@@ -34,7 +34,7 @@ public class KafkaProducerConfig {
                 Properties config = new Properties();
                 config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
                 config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-                config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GeneralAvroSerializer.class);
+                config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, serializer.GeneralAvroSerializer.class);
 
                 producer = new KafkaProducer<>(config);
             }
