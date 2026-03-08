@@ -1,11 +1,9 @@
 package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +12,7 @@ import java.util.List;
 @Table(name = "sensors")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@ToString(exclude = {"scenarioConditions", "scenarioActions"})
 public class Sensor {
     @Id
     @Column(name = "id", length = 100)
@@ -26,5 +22,8 @@ public class Sensor {
     private String hubId;
 
     @OneToMany(mappedBy = "sensor")
-    private List<Action> actions = new ArrayList<>();
+    private List<ScenarioCondition> scenarioConditions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sensor")
+    private List<ScenarioAction> scenarioActions = new ArrayList<>();
 }

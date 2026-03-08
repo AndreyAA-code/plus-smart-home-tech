@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "scenarios")
 @Getter
@@ -21,13 +18,10 @@ public class Scenario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "hub_id", nullable = false)
+    
+    @Column(name = "hub_id")
     private String hubId;
-
-    @Column(name = "name", nullable = false)
+    
+    @Column(name = "name")
     private String name;
-
-    @OneToMany(mappedBy = "scenario")
-    private List<Action> actions = new ArrayList<>();
 }

@@ -6,32 +6,29 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.yandex.practicum.kafka.telemetry.event.ActionTypeAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ConditionOperationAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ConditionTypeAvro;
 
 @Entity
-@Table(name = "actions")
+@Table(name = "conditions")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Action {
+public class Condition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private ActionTypeAvro type;
-    
+    private ConditionTypeAvro type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operation")
+    private ConditionOperationAvro operation;
+
     @Column(name = "value")
     private Integer value;
-
-    @ManyToOne
-    @JoinColumn(name = "scenario_id")
-    private Scenario scenario;
-
-    @ManyToOne
-    @JoinColumn(name = "sensor_id")
-    private Sensor sensor;
 }
