@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.client.ScenarioActionProducer;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
+import ru.yandex.practicum.model.Action;
 import ru.yandex.practicum.model.Scenario;
 import ru.yandex.practicum.repository.ScenarioRepository;
-import ru.yandex.practicum.client.ScenarioActionProducer;
 
 import java.util.List;
 
@@ -30,8 +31,20 @@ public class SnapshotHandler {
         // Для каждого сценария проверяем условия
         for (Scenario scenario : scenarios) {
             log.info("Проверка сценария: {}", scenario.getName());
-            // TODO: реализовать проверку условий и выполнение действий
-            // TODO: для каждого действия вызывать actionProducer.sendAction(action)
+            
+            // TODO: реализовать проверку условий
+            
+            // Получаем действия для этого сценария
+            List<Action> actions = scenario.getActions();
+            if (actions != null && !actions.isEmpty()) {
+                log.info("Сценарий '{}' содержит {} действий", scenario.getName(), actions.size());
+                
+                // Отправляем каждое действие в Hub Router
+                for (Action action : actions) {
+                    log.info("Отправка действия для сенсора {}", action.getSensor().getId());
+                    actionProducer.sendAction(action, hubId, scenario.getName(), action.getSensor().getId());
+                }
+            }
         }
     }
 }
