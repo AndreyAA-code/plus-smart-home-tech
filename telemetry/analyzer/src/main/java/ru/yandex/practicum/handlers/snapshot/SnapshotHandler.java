@@ -29,7 +29,7 @@ public class SnapshotHandler {
     private final ActionRepository actionRepository;
     private final ScenarioActionProducer scenarioActionProducer;
 
-    public void handle(SensorsSnapshotAvro sensorsSnapshot) {
+    public void handleSnapshot(SensorsSnapshotAvro sensorsSnapshot) {
         log.info("Зашли в метод handleSnapshot");
         Map<String, SensorStateAvro> sensorStateMap = sensorsSnapshot.getSensorsState();
         List<Scenario> scenarios = scenarioRepository.findByHubId(sensorsSnapshot.getHubId());
