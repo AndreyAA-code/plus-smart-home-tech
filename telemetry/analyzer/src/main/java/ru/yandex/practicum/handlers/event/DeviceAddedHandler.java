@@ -24,9 +24,10 @@ public class DeviceAddedHandler implements HubEventHandler {
         
         log.info("Добавляем устройство с id = {} в хаб с hub_id = {}", sensorId, hubId);
 
-        Sensor sensor = new Sensor();
-        sensor.setId(sensorId);
-        sensor.setHubId(hubId);
+        Sensor sensor = Sensor.builder()
+                .id(sensorId)
+                .hubId(hubId)
+                .build();
         
         sensorRepository.save(sensor);
         log.info("Сенсор {} успешно сохранен", sensorId);

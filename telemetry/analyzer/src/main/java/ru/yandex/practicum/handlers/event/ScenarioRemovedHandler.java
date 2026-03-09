@@ -8,9 +8,9 @@ import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
 import ru.yandex.practicum.repository.ScenarioRepository;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class ScenarioRemovedHandler implements HubEventHandler {
     private final ScenarioRepository scenarioRepository;
 
@@ -18,10 +18,17 @@ public class ScenarioRemovedHandler implements HubEventHandler {
     @Transactional
     public void handle(HubEventAvro event) {
         ScenarioRemovedEventAvro removedEvent = (ScenarioRemovedEventAvro) event.getPayload();
-        log.info("Удаляем сценарий '{}' из хаба с hub_id = {}", 
-                removedEvent.getName(), event.getHubId());
+        String hubId = event.getHubId();
+        String scenarioName = removedEvent.getName();
+        
+        log.info("Удаляем сценарий '{}' из хаба с hub_id = {}", scenarioName, hubId);
 
-        scenarioRepository.deleteByHubIdAndName(event.getHubId(), removedEvent.getName());
+        // Находим сценарий по hubId и name
+        scenarioRepository.findByHubIdAndName(hubId, scenarioName)
+                .ifPresent(scenario -> {
+                    scenarioRepository.delete(scenario);
+                    log.info("Сценарий '{}' успешно удален", scenarioName);
+                });
     }
 
     @Override
