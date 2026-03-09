@@ -16,7 +16,6 @@ public class DeviceAddedHandler implements HubEventHandler {
     private final SensorRepository sensorRepository;
 
     @Override
-    @Transactional
     public void handle(HubEventAvro event) {
         DeviceAddedEventAvro addedEvent = (DeviceAddedEventAvro) event.getPayload();
         String sensorId = addedEvent.getId();
