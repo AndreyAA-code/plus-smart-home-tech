@@ -8,8 +8,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.handlers.snapshot.SnapshotHandler;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
-import ru.yandex.practicum.service.ScenarioAnalyzer;
 
 import java.time.Duration;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SnapshotProcessor {
     private final KafkaConsumer<String, SensorsSnapshotAvro> snapshotConsumer;
-    private final ScenarioAnalyzer scenarioAnalyzer;
+    private final SnapshotHandler snapshotHandler; // <- ВАЖНО: SnapshotHandler, а не ScenarioAnalyzer
     
     @Value("${kafka.topics.snapshots}")
     private String snapshotsTopic;
@@ -28,6 +28,8 @@ public class SnapshotProcessor {
         try {
             snapshotConsumer.subscribe(List.of(snapshotsTopic));
             log.info("Подписались на топик снапшотов: {}", snapshotsTopic);
+            
+            Runtime.getRuntime().addShutdownHook(new Thread(snapshotConsumer::wakeup));
 
             while (true) {
                 ConsumerRecords<String, SensorsSnapshotAvro> records = snapshotConsumer.poll(Duration.ofMillis(1000));
@@ -37,11 +39,11 @@ public class SnapshotProcessor {
                     log.info("Получили снапшот от хаба: {}, timestamp: {}", 
                             snapshot.getHubId(), snapshot.getTimestamp());
 
-                    scenarioAnalyzer.analyze(snapshot);
+                    // Вызываем SnapshotHandler, а не ScenarioAnalyzer
+                    snapshotHandler.handleSnapshot(snapshot);
                 }
 
                 snapshotConsumer.commitSync();
-                log.debug("Коммит смещений для топика снапшотов");
             }
         } catch (WakeupException ignored) {
             log.info("Получен сигнал завершения для SnapshotProcessor");
