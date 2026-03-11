@@ -19,7 +19,7 @@ import serializer.GeneralAvroSerializer;
 import java.util.Properties;
 
 @Configuration
-@ConfigurationProperties
+@ConfigurationProperties("aggregator")
 public class KafkaConfig {
 
     @Value("${kafka.bootstrap-servers}")
