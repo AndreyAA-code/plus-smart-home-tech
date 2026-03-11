@@ -46,38 +46,38 @@ services:
     networks:
       - smart-home-network
 
-  collector:
-    build:
-      context: ./telemetry/collector
-      dockerfile: Dockerfile
-    container_name: collector
-    ports:
-      - "8080:8080"
-      - "59091:59091"
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      KAFKA_BOOTSTRAP_SERVER: kafka:29092
-    depends_on:
-      kafka-init-topics:
-        condition: service_completed_successfully
-    networks:
-      - smart-home-network
+  #collector:
+   # build:
+    #  context: ./telemetry/collector
+     # dockerfile: Dockerfile
+   # container_name: collector
+    #ports:
+     # - "8080:8080"
+     # - "59091:59091"
+  # environment:
+    #  SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    #  KAFKA_BOOTSTRAP_SERVER: kafka:29092
+    #depends_on:
+     # kafka-init-topics:
+      #  condition: service_completed_successfully
+    #networks:
+     # - smart-home-network
 
-  aggregator:
-    build:
-      context: ./telemetry/aggregator
-      dockerfile: Dockerfile
-    container_name: aggregator
-    ports:
-      - "8086:8080"
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      KAFKA_BOOTSTRAP_SERVER: kafka:29092
-    depends_on:
-      kafka-init-topics:
-        condition: service_completed_successfully
-    networks:
-      - smart-home-network
+#  aggregator:
+ #   build:
+  #    context: ./telemetry/aggregator
+   #   dockerfile: Dockerfile
+    #container_name: aggregator
+    #ports:
+     # - "8086:8080"
+    #environment:
+     # SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      #KAFKA_BOOTSTRAP_SERVER: kafka:29092
+   # depends_on:
+    #  kafka-init-topics:
+     #   condition: service_completed_successfully
+    #networks:
+     # - smart-home-network
 
   postgres:
     image: postgres:15-alpine
@@ -86,13 +86,13 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_DB: analyzer
-      POSTGRES_USER: analyzer
-      POSTGRES_PASSWORD: analyzer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./telemetry/analyzer/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U analyzer -d analyzer"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d analyzer"]
       interval: 10s
       timeout: 5s
       retries: 5
