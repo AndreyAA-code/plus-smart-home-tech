@@ -39,6 +39,7 @@
         <avro-maven-plugin.version>${avro.version}</avro-maven-plugin.version>
         <protobuf-plugin.version>2.4.0</protobuf-plugin.version>
         <spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
+        <project.org.mapstruct.mapstruct.version>1.6.0</project.org.mapstruct.mapstruct.version>
 
     </properties>
 
@@ -106,6 +107,17 @@
                 <groupId>net.devh</groupId>
                 <artifactId>grpc-client-spring-boot-starter</artifactId>
                 <version>${grpc-client-spring-boot-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${project.org.mapstruct.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${project.org.mapstruct.mapstruct.version}</version>
             </dependency>
 
         </dependencies>

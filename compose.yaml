@@ -81,18 +81,20 @@ services:
 
   postgres:
     image: postgres:15-alpine
-    container_name: postgres
+    container_name: plus_smart_home_tech
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: analyzer
+      POSTGRES_DB: smarthome
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./telemetry/analyzer/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./telemetry/analyzer/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-analyzer-schema.sql
+      - ./shopping-store/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/02-shopping-store-schema.sql
+      - ./shopping-cart/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/03-shopping-cart-schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d analyzer"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smarthome"]
       interval: 10s
       timeout: 5s
       retries: 5
