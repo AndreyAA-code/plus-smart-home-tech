@@ -22,18 +22,3 @@ spring:
       hibernate:
         default_schema: shopping_cart
         format_sql: true
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      warehouse:
-        register-health-indicator: true
-        sliding-window-size: 10
-        minimum-number-of-calls: 5
-        permitted-number-of-calls-in-half-open-state: 3
-        automatic-transition-from-open-to-half-open-enabled: true
-        wait-duration-in-open-state: 10s
-        failure-rate-threshold: 50
-        event-consumer-buffer-size: 10
-        slow-call-rate-threshold: 100
-        slow-call-duration-threshold: 5s
