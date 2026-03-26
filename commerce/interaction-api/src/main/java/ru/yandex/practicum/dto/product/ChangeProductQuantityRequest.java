@@ -7,9 +7,8 @@ import java.util.UUID;
 
 @Data
 public class ChangeProductQuantityRequest {
- @NotNull
+    @NotNull
     private UUID productId;
- @NotNull
+    @NotNull
     private Integer newQuantity;
-
 }

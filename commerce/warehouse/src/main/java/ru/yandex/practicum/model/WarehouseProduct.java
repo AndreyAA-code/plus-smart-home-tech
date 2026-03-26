@@ -17,10 +17,16 @@ public class WarehouseProduct {
     @Id
     @Column(name = "product_id")
     private UUID productId;
+    @Column(name = "fragile")
     private Boolean fragile;
+    @Column(name = "width")
     private Double width;
+    @Column(name = "height")
     private Double height;
+    @Column(name = "depth")
     private Double depth;
+    @Column(name = "weight")
     private Double weight;
+    @Column(name = "quantity")
     private Integer quantity = 0;
 }

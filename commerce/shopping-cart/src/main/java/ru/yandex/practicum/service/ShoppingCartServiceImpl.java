@@ -22,13 +22,13 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartMapper cartMapper;
     private final WarehouseFeignClient warehouseClient;
 
-    @Transactional(readOnly = true)
     @Override
     public ShoppingCartDto getShoppingCart(String username) {
         validateUsername(username);
@@ -38,7 +38,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return cartMapper.toCartDto(cart);
     }
 
-    @Transactional
+
     @Override
     public ShoppingCartDto addProductToShoppingCart(String username, Map<UUID, Integer> products) {
         log.info("Add product to cart for username {}", username);
@@ -47,7 +47,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         checkCartIsActive(cart);
         Map<UUID, Integer> oldProducts = cart.getProducts();
         oldProducts.putAll(products);
-        cart.setProducts(oldProducts);
         log.info("Get shopping cart", cart);
 
         BookedProductsDto bookedProductsDto = warehouseClient.checkProductQuantityEnoughForShoppingCart(cartMapper.toCartDto(cart));
@@ -58,7 +57,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return cartMapper.toCartDto(cart);
     }
 
-    @Transactional
     @Override
     public void deactivateCurrentShoppingCart(String username) {
         validateUsername(username);
@@ -69,7 +67,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         log.info("Get shopping cart", cart);
     }
 
-    @Transactional
     @Override
     public ShoppingCartDto removeFromShoppingCart(String username, List<UUID> products) {
         validateUsername(username);
@@ -91,7 +88,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return cartMapper.toCartDto(cart);
     }
 
-    @Transactional
     @Override
     public ShoppingCartDto changeProductQuantity(String username, ChangeProductQuantityRequest request) {
         validateUsername(username);
