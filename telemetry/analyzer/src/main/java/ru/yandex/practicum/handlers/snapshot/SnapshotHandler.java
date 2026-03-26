@@ -3,7 +3,6 @@ package ru.yandex.practicum.handlers.snapshot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.client.ScenarioActionProducer;
 import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ConditionOperationAvro;
@@ -30,7 +29,6 @@ public class SnapshotHandler {
     private final ActionRepository actionRepository;
     private final ScenarioActionProducer scenarioActionProducer;
 
-    @Transactional
     public void handleSnapshot(SensorsSnapshotAvro sensorsSnapshot) {
         log.info("Зашли в метод handleSnapshot");
         Map<String, SensorStateAvro> sensorStateMap = sensorsSnapshot.getSensorsState();

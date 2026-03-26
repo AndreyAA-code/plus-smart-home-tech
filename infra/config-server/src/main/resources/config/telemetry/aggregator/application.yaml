@@ -1,0 +1,29 @@
+# Kafka configuration
+kafka:
+  bootstrap-servers: localhost:9092
+  group-id: aggregator-group
+  input-topic: telemetry.sensors.v1
+  output-topic: telemetry.snapshots.v1
+
+# Spring Kafka properties
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: aggregator-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# Server port
+server:
+  port: 8081
+
+# Logging
+logging:
+  level:
+    ru.yandex.practicum: DEBUG
+    org.apache.kafka: INFO
