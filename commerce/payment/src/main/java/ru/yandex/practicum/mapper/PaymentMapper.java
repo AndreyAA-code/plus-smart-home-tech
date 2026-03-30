@@ -27,7 +27,7 @@ public interface PaymentMapper {
     @Mapping(target = "productTotal", source = "ordersDto.productPrice")
     @Mapping(target = "paymentState", ignore = true)
     @Mapping(target = "orderId", source = "ordersDto.orderId")
-    Payment toPayment(OrdersDto orderDto, BigDecimal feeTotal);
+    Payment toPayment(OrdersDto ordersDto, BigDecimal feeTotal);
 
     PaymentDto toPaymentDto(Payment payment);
 }

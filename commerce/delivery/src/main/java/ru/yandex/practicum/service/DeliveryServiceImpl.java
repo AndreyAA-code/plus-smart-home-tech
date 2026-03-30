@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.api.WarehouseFeignClient;
 import ru.yandex.practicum.dto.delivery.DeliveryDto;
+import ru.yandex.practicum.dto.delivery.DeliveryState;
 import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.exception.NoDeliveryFoundException;
 import ru.yandex.practicum.mapper.AddressMapper;
@@ -44,17 +44,32 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public void successful(UUID orderId) {
-
+        log.info("Successful delivery for order {}", orderId);
+        Delivery delivery = deliveryRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new NoDeliveryFoundException
+                        ("No delivery for the order: " + orderId));
+        delivery.setDeliveryState(DeliveryState.DELIVERED);
+        deliveryRepository.save(delivery);
     }
 
     @Override
     public void picked(UUID orderId) {
-
+        log.info("Picked delivery for order {}", orderId);
+        Delivery delivery = deliveryRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new NoDeliveryFoundException
+                        ("No delivery for the order: " + orderId));
+        delivery.setDeliveryState(DeliveryState.IN_PROGRESS);
+        deliveryRepository.save(delivery);
     }
 
     @Override
     public void failed(UUID orderId) {
-
+        log.info("Failed delivery for order {}", orderId);
+        Delivery delivery = deliveryRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new NoDeliveryFoundException
+                        ("No delivery for the order: " + orderId));
+        delivery.setDeliveryState(DeliveryState.FAILED);
+        deliveryRepository.save(delivery);
     }
 
     @Override

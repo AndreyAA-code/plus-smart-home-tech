@@ -12,4 +12,5 @@ import ru.yandex.practicum.dto.warehouse.AddressDto;
 public class CreateNewOrderRequest {
     private ShoppingCartDto shoppingCart;
     private AddressDto address;
+    private String username;
 }

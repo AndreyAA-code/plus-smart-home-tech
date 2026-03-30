@@ -30,6 +30,8 @@ public class Orders {
     private UUID paymentId;
     @Column(name = "delivery_id")
     private UUID deliveryId;
+    @Column(name = "username")
+    private String username;
     @Column(name = "order_state", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrdersState orderState = OrdersState.NEW;

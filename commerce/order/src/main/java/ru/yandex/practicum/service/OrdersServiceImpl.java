@@ -46,7 +46,7 @@ public class OrdersServiceImpl implements OrdersService {
     public List<OrdersDto> getOrders(String username) {
         checkUser(username);
         log.info("Get orders for user {}", username);
-        List<Orders> orders = ordersRepository.findAllByUsername();
+        List<Orders> orders = ordersRepository.findAllByUsername(username);
         return orders.stream()
                 .map(ordersMapper::toOrdersDto)
                 .collect(Collectors.toList());

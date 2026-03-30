@@ -8,9 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.api.ShoppingStoreFeignClient;
 import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.payment.PaymentDto;
-import ru.yandex.practicum.exception.NoProductsInOrderException;
-import ru.yandex.practicum.exception.NotEnoughInfoInOrderToCalculateException;
-import ru.yandex.practicum.exception.ProductNotFoundException;
+import ru.yandex.practicum.dto.payment.PaymentState;
+import ru.yandex.practicum.exception.*;
 import ru.yandex.practicum.mapper.PaymentMapper;
 import ru.yandex.practicum.model.Payment;
 import ru.yandex.practicum.repository.PaymentRepository;
@@ -29,28 +28,27 @@ public class PaymentServiceImpl implements PaymentService {
     private final ShoppingStoreFeignClient shoppingStoreFeignClient;
     private static final BigDecimal VAT = BigDecimal.valueOf(0.1);
 
-
     @Override
-    public PaymentDto createPayment(OrdersDto orderDto) {
-        log.info("Create payment {}", orderDto);
-        BigDecimal productCost = orderDto.getProductPrice();
-        BigDecimal deliveryTotal = orderDto.getDeliveryPrice();
-        BigDecimal totalCost = orderDto.getTotalPrice();
+    public PaymentDto createPayment(OrdersDto ordersDto) {
+        log.info("Create payment {}", ordersDto);
+        BigDecimal productCost = ordersDto.getProductPrice();
+        BigDecimal deliveryTotal = ordersDto.getDeliveryPrice();
+        BigDecimal totalCost = ordersDto.getTotalPrice();
         if (productCost == null || deliveryTotal == null || totalCost == null) {
             throw new NotEnoughInfoInOrderToCalculateException("Not enough info in order to calculate payment");
         }
         BigDecimal feeTotal = productCost.multiply(VAT);
-        Payment payment = paymentMapper.toPayment(orderDto, feeTotal);
+        Payment payment = paymentMapper.toPayment(ordersDto, feeTotal);
         payment = paymentRepository.save(payment);
         log.info("Payment {}", payment);
         return paymentMapper.toPaymentDto(payment);
     }
 
     @Override
-    public BigDecimal getTotalCost(OrdersDto orderDto) {
-        log.info("Get total cost {}", orderDto);
-        BigDecimal productCost = orderDto.getProductPrice();
-        BigDecimal deliveryTotal = orderDto.getDeliveryPrice();
+    public BigDecimal getTotalCost(OrdersDto ordersDto) {
+        log.info("Get total cost {}", ordersDto);
+        BigDecimal productCost = ordersDto.getProductPrice();
+        BigDecimal deliveryTotal = ordersDto.getDeliveryPrice();
         if (productCost == null || deliveryTotal == null) {
             throw new NotEnoughInfoInOrderToCalculateException("Not enough info in order to calculate payment");
         }
@@ -63,14 +61,16 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void paymentRefunded(UUID paymentId) {
         log.info("Payment refunded {}", paymentId);
-
-
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new NoPaymentFoundException("Payment doesn't exist"));
+        payment.setPaymentState(PaymentState.SUCCESS);
+        paymentRepository.save(payment);
     }
 
     @Override
-    public BigDecimal productCost(OrdersDto orderDto) {
-        log.info("Product cost {}", orderDto);
-        Map<UUID, Integer> products = orderDto.getProducts();
+    public BigDecimal productCost(OrdersDto ordersDto) {
+        log.info("Product cost {}", ordersDto);
+        Map<UUID, Integer> products = ordersDto.getProducts();
         if (products.isEmpty()) {
             throw new NoProductsInOrderException("No product in shopping cart");
         }
@@ -90,7 +90,6 @@ public class PaymentServiceImpl implements PaymentService {
 
             productCost = productCost.add(price.multiply(BigDecimal.valueOf(quantity)));
         }
-
         log.info("Calculated total product cost: {}", productCost);
         return productCost;
     }
@@ -98,6 +97,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void paymentFailed(UUID paymentId) {
         log.info("Payment failed {}", paymentId);
-
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new NoPaymentFoundException("Payment doesn't exist"));
+        payment.setPaymentState(PaymentState.FAILED);
+        paymentRepository.save(payment);
     }
 }
