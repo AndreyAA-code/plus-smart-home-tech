@@ -11,6 +11,7 @@ spring:
       retry:
         # используем случайный backoff между попытками
         useRandomPolicy: true
+        max-interval: 6000
         # максимальный интервал, в течение которого делаем попытки (6000 миллисекунд = 6 сек)        max-interval: 6000
       discovery:
         enabled: true
@@ -21,16 +22,7 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
   instance:
-    preferIpAddress: true
+    prefer-ip-address: true
     hostname: localhost
     instance-id: "${spring.application.name}:${random.value}"
     leaseRenewalIntervalInSeconds: 10
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info
-logging:
-  file:
-    name: logs/gateway-server.log
