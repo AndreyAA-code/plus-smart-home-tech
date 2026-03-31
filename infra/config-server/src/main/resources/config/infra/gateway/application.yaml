@@ -13,3 +13,15 @@ spring:
           filters:
             - PrefixPath=/api/v1
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "gateway,health,info"
+      base-path: /actuator
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+
