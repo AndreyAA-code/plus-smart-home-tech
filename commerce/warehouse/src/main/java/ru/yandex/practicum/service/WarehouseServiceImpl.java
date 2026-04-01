@@ -53,6 +53,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public BookedProductsDto checkProductQuantityEnoughForShoppingCart(ShoppingCartDto cartDto) {
         log.info("Запрашиваем товары из корзины {}", cartDto);
+        log.debug("Проверка достаточного количества товаров для корзины {}", cartDto.getShoppingCartId());
         Map<UUID, Integer> products = cartDto.getProducts();
         log.info("Запрашиваем количество доступных товаров на складе {}", products.keySet());
         List<WarehouseProduct> availableProductsList = warehouseRepository.findAllById(products.keySet());

@@ -15,6 +15,7 @@ spring:
 
 eureka:
   instance:
+    instance-id: ${spring.application.name}:${random.value}
     prefer-ip-address: true
     hostname: ${HOSTNAME:localhost}
   client:
