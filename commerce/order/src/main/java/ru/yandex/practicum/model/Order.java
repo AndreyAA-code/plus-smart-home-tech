@@ -16,5 +16,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_id")
     private UUID orderId;
-    private ShoppingCart cart;
+    @Column(name = "payment_id")
+    private UUID paymentId;
+
+
 }
