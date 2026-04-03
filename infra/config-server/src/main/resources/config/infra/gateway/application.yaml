@@ -35,7 +35,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "gateway,health,info"
+        include: "*"
       base-path: /actuator
   endpoint:
     gateway:
