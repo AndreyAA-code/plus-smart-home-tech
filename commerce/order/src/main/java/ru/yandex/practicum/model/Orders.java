@@ -1,7 +1,6 @@
 package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ru.yandex.practicum.dto.order.OrderState;
 
@@ -15,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table (name = "order", schema = "order")
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_id")

@@ -8,7 +8,6 @@ import ru.yandex.practicum.api.ShoppingCartFeignClient;
 import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 import ru.yandex.practicum.dto.product.ChangeProductQuantityRequest;
 import ru.yandex.practicum.service.ShoppingCartService;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Map;
