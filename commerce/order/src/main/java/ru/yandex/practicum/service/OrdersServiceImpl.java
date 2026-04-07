@@ -9,6 +9,7 @@ import ru.yandex.practicum.api.WarehouseFeignClient;
 import ru.yandex.practicum.dto.order.CreateNewOrderRequest;
 import ru.yandex.practicum.dto.order.OrderDto;
 import ru.yandex.practicum.dto.order.ProductReturnRequest;
+import ru.yandex.practicum.mapper.OrdersMapper;
 import ru.yandex.practicum.repository.OrdersRepository;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Transactional
 public class OrdersServiceImpl implements OrdersService {
     private final OrdersRepository ordersRepository;
-    private final OrdersFeignClient ordersClient;
+    private final OrdersMapper ordersMapper;
 
     @Override
     public List<OrderDto> getOrders(String username) {
