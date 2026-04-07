@@ -24,61 +24,73 @@ public class OrdersController implements OrdersFeignClient {
 
     @Override
     public List<OrderDto> getOrders(String username) {
-        return List.of();
+        log.info("Get orders for user {}", username);
+        return ordersService.getOrders(username);
     }
 
     @Override
     public OrderDto createNewOrder(CreateNewOrderRequest orderRequest) {
-        return null;
+        log.info("Create new order {}", orderRequest);
+        return ordersService.createNewOrder(orderRequest);
     }
 
     @Override
     public OrderDto returnOrder(ProductReturnRequest returnRequest) {
-        return null;
+        log.info("Return order {}", returnRequest);
+        return ordersService.returnOrder(returnRequest);
     }
 
     @Override
     public OrderDto payment(UUID orderId) {
-        return null;
+        log.info("Payment order {}", orderId);
+        return ordersService.payment(orderId);
     }
 
     @Override
     public OrderDto paymentFailed(UUID orderId) {
-        return null;
+        log.info("Payment failed order {}", orderId);
+        return ordersService.paymentFailed(orderId);
     }
 
     @Override
     public OrderDto delivery(UUID orderId) {
-        return null;
+        log.info("Delivery order {}", orderId);
+        return ordersService.delivery(orderId);
     }
 
     @Override
     public OrderDto deliveryFailed(UUID orderId) {
-        return null;
+        log.info("Delivery failed order {}", orderId);
+        return ordersService.deliveryFailed(orderId);
     }
 
     @Override
     public OrderDto complete(UUID orderId) {
-        return null;
+        log.info("Complete order {}", orderId);
+        return ordersService.complete(orderId);
     }
 
     @Override
     public OrderDto calculateTotalCost(UUID orderId) {
-        return null;
+        log.info("Calculate total cost for order {}", orderId);
+        return ordersService.calculateTotalCost(orderId);
     }
 
     @Override
     public OrderDto calculateDeliveryCost(UUID orderId) {
-        return null;
+        log.info("Calculate delivery cost for order {}", orderId);
+        return ordersService.calculateDeliveryCost(orderId);
     }
 
     @Override
     public OrderDto assembly(UUID orderId) {
-        return null;
+        log.info("Assemble order {}", orderId);
+        return ordersService.assembly(orderId);
     }
 
     @Override
     public OrderDto assemblyFailed(UUID orderId) {
-        return null;
+        log.info("Assemble failed order {}", orderId);
+        return ordersService.assemblyFailed(orderId);
     }
 }
