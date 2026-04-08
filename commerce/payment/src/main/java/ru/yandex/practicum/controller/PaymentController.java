@@ -9,6 +9,9 @@ import ru.yandex.practicum.dto.order.OrderDto;
 import ru.yandex.practicum.dto.payment.PaymentDto;
 import ru.yandex.practicum.service.PaymentService;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -19,6 +22,30 @@ public class PaymentController implements PaymentFeignClient {
     @Override
     public PaymentDto createPayment(OrderDto orderDto) {
         log.info("Create payment request");
-        return null;
+        return paymentService.createPayment(orderDto);
+    }
+
+    @Override
+    public BigDecimal getTotalCost(OrderDto orderDto) {
+        log.info("Get Total cost");
+        return paymentService.getTotalCost(orderDto);
+    }
+
+    @Override
+    public void paymentRefunded(UUID paymentId) {
+        log.info("Payment refunded request");
+        paymentService.paymentRefunded(paymentId);
+    }
+
+    @Override
+    public BigDecimal getProductCost(OrderDto orderDto) {
+        log.info("Get Product cost");
+        return paymentService.getProductCost(orderDto);
+    }
+
+    @Override
+    public void paymentFailed(UUID paymentId) {
+        log.info("Payment failed request");
+        paymentService.paymentFailed(paymentId);
     }
 }
