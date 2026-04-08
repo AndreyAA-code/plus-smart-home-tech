@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.api.PaymentFeignClient;
 import ru.yandex.practicum.dto.order.OrderDto;
 import ru.yandex.practicum.dto.payment.PaymentDto;
+import ru.yandex.practicum.service.PaymentService;
 
 @RestController
 @Slf4j
