@@ -5,15 +5,17 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.yandex.practicum.dto.delivery.DeliveryDto;
+import ru.yandex.practicum.dto.warehouse.AddressDto;
+import ru.yandex.practicum.model.Address;
 import ru.yandex.practicum.model.Delivery;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-public interface DeliveryMapper {
+public interface AddressMapper {
 
-    @Mapping(target = "deliveryId", ignore = true)
-    Delivery toDelivery(DeliveryDto deliveryDto);
+    @Mapping(target = "addressId", ignore = true)
+    Address toAddress(AddressDto addressDto);
 
-    DeliveryDto toDeliveryDto(Delivery delivery);
+    AddressDto toDeliveryDto(Address address);
 
 }
