@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.api.DeliveryFeignClient;
 import ru.yandex.practicum.dto.delivery.DeliveryDto;
-import ru.yandex.practicum.dto.order.OrderDto;
+import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.service.DeliveryService;
 
 import java.math.BigDecimal;
@@ -44,7 +44,7 @@ public class DeliveryController implements DeliveryFeignClient {
     }
 
     @Override
-    public BigDecimal cost(OrderDto orderDto) {
+    public BigDecimal cost(OrdersDto orderDto) {
         log.info("Cost of delivery: {}", orderDto);
         return deliveryService.cost(orderDto);
     }

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.dto.delivery.DeliveryDto;
-import ru.yandex.practicum.dto.order.OrderDto;
+import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.mapper.DeliveryMapper;
 import ru.yandex.practicum.repository.DeliveryRepository;
 
@@ -42,7 +42,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public BigDecimal cost(OrderDto orderDto) {
+    public BigDecimal cost(OrdersDto orderDto) {
         return null;
     }
 }

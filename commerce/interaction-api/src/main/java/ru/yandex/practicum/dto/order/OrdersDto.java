@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Data
-public class OrderDto {
+public class OrdersDto {
     @NotNull
     private UUID orderId;
     private UUID shoppingCartId;

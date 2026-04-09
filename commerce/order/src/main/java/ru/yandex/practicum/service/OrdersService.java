@@ -1,7 +1,7 @@
 package ru.yandex.practicum.service;
 
 import ru.yandex.practicum.dto.order.CreateNewOrderRequest;
-import ru.yandex.practicum.dto.order.OrderDto;
+import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.order.ProductReturnRequest;
 
 import java.util.List;
@@ -9,27 +9,27 @@ import java.util.UUID;
 
 public interface OrdersService {
 
-    List<OrderDto> getOrders(String username);
+    List<OrdersDto> getOrders(String username);
 
-    OrderDto createNewOrder(CreateNewOrderRequest orderRequest);
+    OrdersDto createNewOrder(CreateNewOrderRequest orderRequest);
 
-    OrderDto returnOrder(ProductReturnRequest returnRequest);
+    OrdersDto returnOrder(ProductReturnRequest returnRequest);
 
-    OrderDto payment(UUID orderId);
+    OrdersDto payment(UUID orderId);
 
-    OrderDto paymentFailed(UUID orderId);
+    OrdersDto paymentFailed(UUID orderId);
 
-    OrderDto delivery(UUID orderId);
+    OrdersDto delivery(UUID orderId);
 
-    OrderDto deliveryFailed(UUID orderId);
+    OrdersDto deliveryFailed(UUID orderId);
 
-    OrderDto complete(UUID orderId);
+    OrdersDto complete(UUID orderId);
 
-    OrderDto calculateTotalCost(UUID orderId);
+    OrdersDto calculateTotalCost(UUID orderId);
 
-    OrderDto calculateDeliveryCost(UUID orderId);
+    OrdersDto calculateDeliveryCost(UUID orderId);
 
-    OrderDto assembly(UUID orderId);
+    OrdersDto assembly(UUID orderId);
 
-    OrderDto assemblyFailed(UUID orderId);
+    OrdersDto assemblyFailed(UUID orderId);
 }

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.dto.order.OrderDto;
+import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.payment.PaymentDto;
 import ru.yandex.practicum.mapper.PaymentMapper;
 import ru.yandex.practicum.repository.PaymentRepository;
@@ -21,12 +21,12 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
 
     @Override
-    public PaymentDto createPayment(OrderDto orderDto) {
+    public PaymentDto createPayment(OrdersDto orderDto) {
         return null;
     }
 
     @Override
-    public BigDecimal getTotalCost(OrderDto orderDto) {
+    public BigDecimal getTotalCost(OrdersDto orderDto) {
         return null;
     }
 
@@ -36,7 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public BigDecimal getProductCost(OrderDto orderDto) {
+    public BigDecimal getProductCost(OrdersDto orderDto) {
         return null;
     }
 

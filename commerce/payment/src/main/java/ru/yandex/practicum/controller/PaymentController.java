@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.api.PaymentFeignClient;
-import ru.yandex.practicum.dto.order.OrderDto;
+import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.payment.PaymentDto;
 import ru.yandex.practicum.service.PaymentService;
 
@@ -20,13 +20,13 @@ public class PaymentController implements PaymentFeignClient {
     private final PaymentService paymentService;
 
     @Override
-    public PaymentDto createPayment(OrderDto orderDto) {
+    public PaymentDto createPayment(OrdersDto orderDto) {
         log.info("Create payment request");
         return paymentService.createPayment(orderDto);
     }
 
     @Override
-    public BigDecimal getTotalCost(OrderDto orderDto) {
+    public BigDecimal getTotalCost(OrdersDto orderDto) {
         log.info("Get Total cost");
         return paymentService.getTotalCost(orderDto);
     }
@@ -38,7 +38,7 @@ public class PaymentController implements PaymentFeignClient {
     }
 
     @Override
-    public BigDecimal getProductCost(OrderDto orderDto) {
+    public BigDecimal getProductCost(OrdersDto orderDto) {
         log.info("Get Product cost");
         return paymentService.getProductCost(orderDto);
     }
