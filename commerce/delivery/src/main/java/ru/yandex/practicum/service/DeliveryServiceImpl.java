@@ -25,13 +25,14 @@ public class DeliveryServiceImpl implements DeliveryService {
     private static final BigDecimal BASE_COST = BigDecimal.valueOf(5.0);
     private static final BigDecimal ADDRESS_1_FEE = BigDecimal.valueOf(1.0);
     private static final BigDecimal ADDRESS_2_FEE = BigDecimal.valueOf(2.0);
-
+    private static final BigDecimal FRAGILE_FEE = BigDecimal.valueOf(0.2);
+    private static final BigDecimal WEIGHT_FEE = BigDecimal.valueOf(0.3);
+    private static final BigDecimal VOLUME_FEE = BigDecimal.valueOf(0.2);
+    private static final BigDecimal DISTANCE_FEE = BigDecimal.valueOf(0.2);
 
     private final DeliveryRepository deliveryRepository;
     private final DeliveryMapper deliveryMapper;
     private final AddressMapper addressMapper;
-    private final WarehouseFeignClient warehouseFeignClient;
-
 
     @Override
     public DeliveryDto create(DeliveryDto deliveryDto) {
@@ -75,15 +76,19 @@ public class DeliveryServiceImpl implements DeliveryService {
             totalCost = totalCost.add(totalCost);
         }
 
+        if (orderDto.getFragile()) {
+            totalCost = totalCost.multiply(FRAGILE_FEE).add(totalCost);
+        }
 
+        totalCost = totalCost.add(BigDecimal.valueOf(orderDto.getDeliveryWeight()).multiply(WEIGHT_FEE));
+        totalCost = totalCost.add(BigDecimal.valueOf(orderDto.getDeliveryVolume()).multiply(VOLUME_FEE));
 
-       log.info("Delivery cost {}", totalCost);
+        if (!warehouseAddress.getStreet().equals(destinationAddress.getStreet())) {
+            totalCost = totalCost.multiply(DISTANCE_FEE).add(totalCost);
+        }
+
+       log.info("Delivery cost calculated {}", totalCost);
         return totalCost;
     }
 
-    private boolean warehouseAddressContains(Address address, String substring) {
-        return address != null
-                && address.getFullAddress() != null
-                && address.getFullAddress().contains(substring);
-    }
 }
