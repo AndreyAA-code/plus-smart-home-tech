@@ -39,17 +39,14 @@ public class WarehouseServiceImpl implements WarehouseService {
                     log.warn("Product with ID: {} already exists", request.getProductId());
                     throw new SpecifiedProductAlreadyInWarehouseException("Product is already in warehouse");
                 });
-        WarehouseProduct product = warehouseRepository.save(warehouseMapper.toEntity(request));
-        log.debug("Добавили товар в перечень - {}", product);
+        warehouseRepository.save(warehouseMapper.toEntity(request));
     }
 
     @Transactional
     @Override
     public BookedProductsDto checkProductQuantityEnoughForShoppingCart(ShoppingCartDto cartDto) {
-        log.info("Запрашиваем товары из корзины {}", cartDto);
-        log.debug("Проверка достаточного количества товаров для корзины {}", cartDto.getShoppingCartId());
         Map<UUID, Integer> products = cartDto.getProducts();
-        log.info("Запрашиваем количество доступных товаров на складе {}", products.keySet());
+        log.info("Query for quantity of products at warehouse {}", products.keySet());
         List<WarehouseProduct> availableProductsList = warehouseRepository.findAllById(products.keySet());
         Map<UUID, WarehouseProduct> availableProductsMap = availableProductsList.stream()
                 .collect(Collectors.toMap(WarehouseProduct::getProductId, Function.identity()));
@@ -58,47 +55,48 @@ public class WarehouseServiceImpl implements WarehouseService {
             UUID id = product.getKey();
             WarehouseProduct availableProduct = availableProductsMap.get(id);
             if (availableProduct == null) {
-                throw new NoSpecifiedProductInWarehouseException("Такого товара нет в перечне товаров на складе:" + product.getKey().toString());
+                throw new NoSpecifiedProductInWarehouseException("No such product at warehouse"
+                        + product.getKey().toString());
             }
             if (availableProduct.getQuantity() >= product.getValue()) {
-                Double volume = bookedProductsDto.getDeliveryVolume() + (availableProduct.getWidth() * availableProduct.getHeight() * availableProduct.getDepth()) * product.getValue();
+                Double volume = bookedProductsDto.getDeliveryVolume() + (availableProduct.getWidth()
+                        * availableProduct.getHeight() * availableProduct.getDepth()) * product.getValue();
                 bookedProductsDto.setDeliveryVolume(volume);
-                Double weight = bookedProductsDto.getDeliveryWeight() + (availableProduct.getWeight()) * product.getValue();
+                Double weight = bookedProductsDto.getDeliveryWeight() + (availableProduct.getWeight())
+                        * product.getValue();
                 bookedProductsDto.setDeliveryWeight(weight);
                 if (availableProduct.getFragile()) {
                     bookedProductsDto.setFragile(true);
                 }
             } else {
-                String message = "Количества продукта " + availableProduct.getProductId() + " недостаточно на складе. Уменьшите количество продукта до " + availableProduct.getQuantity();
+                String message = "Quantity of " + availableProduct.getProductId() + " " +
+                        "is not enough& Reduce the quantity " + availableProduct.getQuantity();
                 log.info(message);
                 throw new ProductInShoppingCartLowQuantityInWarehouse(message);
             }
         }
-        log.info("Параметры заказа: {}", bookedProductsDto);
         return bookedProductsDto;
     }
 
     @Transactional
     @Override
     public void addProductToWarehouse(AddProductToWarehouseRequest request) {
-        log.info("Запрошено принятие товара на склад {}", request);
+        log.info("Add product to warehouse request {}", request);
         WarehouseProduct product = warehouseRepository.findById(request.getProductId())
-                .orElseThrow(() -> new NoSpecifiedProductInWarehouseException("Такого товара нет в перечне товаров на складе:" + request.getProductId()));
+                .orElseThrow(() -> new NoSpecifiedProductInWarehouseException("No such product at warehouse"
+                        + request.getProductId()));
         Integer oldQuantity = product.getQuantity();
         Integer newQuantity = oldQuantity + request.getQuantity();
         product.setQuantity(newQuantity);
-        log.info("Приняли товар на склад");
 
-        log.info("Проверяем, есть ли товар в магазине");
         ProductDto productDto;
         try {
             productDto = shoppingStoreClient.getProduct(product.getProductId());
             QuantityState quantityState = QuantityState.fromQuantity(newQuantity);
-            log.info("Обновляем количество товара в магазине");
             shoppingStoreClient.setProductQuantityState(product.getProductId(), quantityState);
-            log.info("Обновили количество товара в магазине");
+            log.info("Quantity updated for warehouse product {}", productDto);
         } catch (RuntimeException e) {
-            log.info("Такого товара нет в магазине");
+            log.info("No such product at warehouse");
         }
     }
 
