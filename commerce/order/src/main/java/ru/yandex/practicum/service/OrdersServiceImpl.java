@@ -14,6 +14,7 @@ import ru.yandex.practicum.dto.order.OrdersState;
 import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.order.ProductReturnRequest;
 import ru.yandex.practicum.dto.warehouse.AddProductToWarehouseRequest;
+import ru.yandex.practicum.dto.warehouse.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.dto.warehouse.BookedProductsDto;
 import ru.yandex.practicum.exception.NoOrderFoundException;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
@@ -56,7 +57,7 @@ public class OrdersServiceImpl implements OrdersService {
         BookedProductsDto bookedProductsDto;
         try {
             log.info("Checking products at warehouse");
-            bookedProductsDto = warehouseFeignClient.checkProductQuantityEnoughForShoppingCart(orderRequest.getShoppingCart());
+            bookedProductsDto = warehouseFeignClient.checkProductQuantityEnoughForShoppingCart(ordersRequest.getShoppingCart());
         } catch (FeignException e) {
             if (e.status() == 400) {
                 throw new ProductInShoppingCartLowQuantityInWarehouse(e.getMessage());
@@ -89,17 +90,26 @@ public class OrdersServiceImpl implements OrdersService {
         log.info("Return order {}", returnRequest);
         Orders returnOrders = getOrdersById(returnRequest.getOrderId());
         Map<UUID, Integer> returnProducts = returnRequest.getProducts();
-        Set<UUID> ids = returnProducts.keySet();
-        for (UUID id : ids) {
-            AddProductToWarehouseRequest addProductToWarehouseRequest = new AddProductToWarehouseRequest(id, returnProducts.get(id));
-            warehouseFeignClient.addProductToWarehouse(addProductToWarehouseRequest);
-        }
+        try {
+            log.info("Returning products to warehouse");
+            warehouseFeignClient.returnProducts(returnProducts);
+        } catch (FeignException e) {
+                throw new RuntimeException(e.getMessage());
+            }
         returnOrders = changeOrdersState(returnOrders, OrdersState.PRODUCT_RETURNED);
         return ordersMapper.toOrdersDto(returnOrders);
     }
 
     @Override
     public OrdersDto payment(UUID orderId) {
+        log.info("Payment order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        orders = changeOrdersState(orders, OrdersState.PAID);
+        AssemblyProductsForOrderRequest assemblyRequest
+                = new AssemblyProductsForOrderRequest(orders.getProducts(),orderId);
+        warehouseFeignClient.assemblyProducts(assemblyRequest);
+
+
         return null;
     }
 

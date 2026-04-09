@@ -8,10 +8,7 @@ import ru.yandex.practicum.api.ShoppingStoreFeignClient;
 import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 import ru.yandex.practicum.dto.product.ProductDto;
 import ru.yandex.practicum.dto.product.QuantityState;
-import ru.yandex.practicum.dto.warehouse.AddProductToWarehouseRequest;
-import ru.yandex.practicum.dto.warehouse.AddressDto;
-import ru.yandex.practicum.dto.warehouse.BookedProductsDto;
-import ru.yandex.practicum.dto.warehouse.NewProductInWarehouseRequest;
+import ru.yandex.practicum.dto.warehouse.*;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
 import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException;
@@ -20,10 +17,7 @@ import ru.yandex.practicum.model.WarehouseProduct;
 import ru.yandex.practicum.repository.WarehouseRepository;
 
 import java.security.SecureRandom;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -111,6 +105,21 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public AddressDto getWarehouseAddress() {
         return warehouseAddress;
+    }
+
+    @Override
+    public void returnProductToWarehouse(Map<UUID, Integer> returnProducts) {
+        Set<UUID> ids = returnProducts.keySet();
+        for (UUID id : ids) {
+            AddProductToWarehouseRequest addProductToWarehouseRequest = new AddProductToWarehouseRequest(id, returnProducts.get(id));
+            addProductToWarehouse(addProductToWarehouseRequest);
+            log.info("Products returned to warehouse");
+        }
+    }
+
+    @Override
+    public BookedProductsDto assemblyProducts(AssemblyProductsForOrderRequest request) {
+        return null;
     }
 
     private AddressDto initAddress() {
