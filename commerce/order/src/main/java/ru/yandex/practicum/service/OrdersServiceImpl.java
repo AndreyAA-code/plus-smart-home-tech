@@ -6,14 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.api.DeliveryFeignClient;
-import ru.yandex.practicum.api.ShoppingCartFeignClient;
 import ru.yandex.practicum.api.WarehouseFeignClient;
 import ru.yandex.practicum.dto.delivery.DeliveryDto;
 import ru.yandex.practicum.dto.delivery.DeliveryState;
 import ru.yandex.practicum.dto.order.CreateNewOrderRequest;
+import ru.yandex.practicum.dto.order.OrdersState;
 import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.order.ProductReturnRequest;
+import ru.yandex.practicum.dto.warehouse.AddProductToWarehouseRequest;
 import ru.yandex.practicum.dto.warehouse.BookedProductsDto;
+import ru.yandex.practicum.exception.NoOrderFoundException;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.NotAuthorizedUserException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
@@ -22,6 +24,8 @@ import ru.yandex.practicum.model.Orders;
 import ru.yandex.practicum.repository.OrdersRepository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,7 +37,6 @@ public class OrdersServiceImpl implements OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrdersMapper ordersMapper;
     private final WarehouseFeignClient warehouseFeignClient;
-    private final ShoppingCartFeignClient shoppingCartFeignClient;
     private final DeliveryFeignClient deliveryFeignClient;
 
     @Override
@@ -47,8 +50,8 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public OrdersDto createNewOrder(CreateNewOrderRequest orderRequest) {
-        log.info("Create new order {}", orderRequest);
+    public OrdersDto createNewOrder(CreateNewOrderRequest ordersRequest) {
+        log.info("Create new order {}", ordersRequest);
 
         BookedProductsDto bookedProductsDto;
         try {
@@ -64,12 +67,12 @@ public class OrdersServiceImpl implements OrdersService {
             }
         }
 
-        Orders newOrders = ordersMapper.toOrders(orderRequest, bookedProductsDto);
+        Orders newOrders = ordersMapper.toOrders(ordersRequest, bookedProductsDto);
         newOrders = ordersRepository.save(newOrders);
 
         DeliveryDto deliveryDto = new DeliveryDto();
         deliveryDto.setFromAddress(warehouseFeignClient.getWarehouseAddress());
-        deliveryDto.setToAddress(orderRequest.getAddress());
+        deliveryDto.setToAddress(ordersRequest.getAddress());
         deliveryDto.setOrderId(newOrders.getOrderId());
         deliveryDto.setDeliveryState(DeliveryState.CREATED);
 
@@ -79,12 +82,20 @@ public class OrdersServiceImpl implements OrdersService {
         newOrders = ordersRepository.save(newOrders);
         log.info("New order {} created", newOrders);
         return ordersMapper.toOrdersDto(newOrders);
-
     }
 
     @Override
     public OrdersDto returnOrder(ProductReturnRequest returnRequest) {
-        return null;
+        log.info("Return order {}", returnRequest);
+        Orders returnOrders = getOrdersById(returnRequest.getOrderId());
+        Map<UUID, Integer> returnProducts = returnRequest.getProducts();
+        Set<UUID> ids = returnProducts.keySet();
+        for (UUID id : ids) {
+            AddProductToWarehouseRequest addProductToWarehouseRequest = new AddProductToWarehouseRequest(id, returnProducts.get(id));
+            warehouseFeignClient.addProductToWarehouse(addProductToWarehouseRequest);
+        }
+        returnOrders = changeOrdersState(returnOrders, OrdersState.PRODUCT_RETURNED);
+        return ordersMapper.toOrdersDto(returnOrders);
     }
 
     @Override
@@ -139,4 +150,14 @@ public class OrdersServiceImpl implements OrdersService {
         }
     }
 
+    private Orders getOrdersById(UUID orderId) {
+        return ordersRepository.findById(orderId)
+                .orElseThrow(() -> new NoOrderFoundException("Order " + orderId + " does not exist"));
+    }
+
+    private Orders changeOrdersState(Orders orders, OrdersState ordersState) {
+        orders.setOrderState(ordersState);
+        orders = ordersRepository.save(orders);
+        return orders;
+    }
 }

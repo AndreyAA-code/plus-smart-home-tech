@@ -2,7 +2,7 @@ package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.yandex.practicum.dto.order.OrderState;
+import ru.yandex.practicum.dto.order.OrdersState;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class Orders {
     private UUID deliveryId;
     @Column(name = "order_state", nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderState orderState = OrderState.NEW;
+    private OrdersState orderState = OrdersState.NEW;
     @Column(name = "delivery_weight")
     private Double deliveryWeight;
     @Column(name = "delivery_volume")
