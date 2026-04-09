@@ -28,4 +28,31 @@ public class Address {
     private String house;
     @Column (name = "flat")
     private String flat;
+
+    public String getFullAddress() {
+        StringBuilder result = new StringBuilder();
+        if (country != null) {
+            result.append(country).append(", ");
+        }
+        if (city != null) {
+            result.append(city).append(", ");
+        }
+        if (street != null) {
+            result.append(street).append(", ");
+        }
+        if (house != null) {
+            result.append("д. ").append(house);
+            if (flat != null) {
+                result.append(", кв. ").append(flat);
+            }
+        } else if (flat != null) {
+            result.append("кв. ").append(flat);
+        }
+        String fullAddress = result.toString();
+        if (fullAddress.endsWith(", ")) {
+            fullAddress = fullAddress.substring(0, fullAddress.length() - 2);
+        }
+
+        return fullAddress.isEmpty() ? "No address exists" : fullAddress;
+    }
 }
