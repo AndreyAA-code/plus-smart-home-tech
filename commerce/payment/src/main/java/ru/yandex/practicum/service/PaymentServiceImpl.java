@@ -29,18 +29,18 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDto createPayment(OrdersDto orderDto) {
         log.info("Create payment {}", orderDto);
-
-
         return null;
     }
 
     @Override
     public BigDecimal getTotalCost(OrdersDto orderDto) {
+        log.info("Get total cost {}", orderDto);
         return null;
     }
 
     @Override
     public void paymentRefunded(UUID paymentId) {
+        log.info("Payment refunded {}", paymentId);
 
     }
 
@@ -74,6 +74,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void paymentFailed(UUID paymentId) {
+        log.info("Payment failed {}", paymentId);
 
     }
 }

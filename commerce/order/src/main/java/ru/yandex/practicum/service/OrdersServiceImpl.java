@@ -14,7 +14,7 @@ import ru.yandex.practicum.dto.order.CreateNewOrderRequest;
 import ru.yandex.practicum.dto.order.OrdersState;
 import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.order.ProductReturnRequest;
-import ru.yandex.practicum.dto.warehouse.AddProductToWarehouseRequest;
+import ru.yandex.practicum.dto.payment.PaymentDto;
 import ru.yandex.practicum.dto.warehouse.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.dto.warehouse.BookedProductsDto;
 import ru.yandex.practicum.exception.NoOrderFoundException;
@@ -28,7 +28,6 @@ import ru.yandex.practicum.repository.OrdersRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -148,7 +147,16 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public OrdersDto calculateTotalCost(UUID orderId) {
-        return null;
+        log.info("Calculate total cost {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        BigDecimal totalCost = paymentFeignClient.getTotalCost(ordersMapper.toOrdersDto(orders));
+        orders.setTotalPrice(totalCost);
+
+        PaymentDto paymentDto = paymentFeignClient.createPayment(ordersMapper.toOrdersDto(orders));
+        orders.setPaymentId(paymentDto.getPaymentId());
+
+        orders = ordersRepository.save(orders);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override
