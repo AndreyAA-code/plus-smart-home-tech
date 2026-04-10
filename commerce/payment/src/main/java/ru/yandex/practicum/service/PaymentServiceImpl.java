@@ -1,15 +1,20 @@
 package ru.yandex.practicum.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.api.ShoppingStoreFeignClient;
 import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.payment.PaymentDto;
+import ru.yandex.practicum.exception.NoProductsInOrderException;
+import ru.yandex.practicum.exception.ProductNotFoundException;
 import ru.yandex.practicum.mapper.PaymentMapper;
 import ru.yandex.practicum.repository.PaymentRepository;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -19,10 +24,12 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
+    private final ShoppingStoreFeignClient shoppingStoreFeignClient;
 
     @Override
     public PaymentDto createPayment(OrdersDto orderDto) {
         log.info("Create payment {}", orderDto);
+
 
         return null;
     }
@@ -39,8 +46,30 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public BigDecimal productCost(OrdersDto orderDto) {
+        log.info("Product cost {}", orderDto);
+        Map<UUID, Integer> products = orderDto.getProducts();
+        if (products.isEmpty()) {
+            throw new NoProductsInOrderException("No product in shopping cart");
+        }
+        BigDecimal productCost = BigDecimal.valueOf(0.0);
+        for (Map.Entry<UUID, Integer> entry : products.entrySet()) {
+            UUID productId = entry.getKey();
+            Integer quantity = entry.getValue();
 
-        return null;
+            BigDecimal price;
+            try {
+                price = shoppingStoreFeignClient.getProduct(productId).getPrice();
+            } catch (FeignException.NotFound e) {
+                throw new ProductNotFoundException("Product not found: " + productId);
+            } catch (FeignException e) {
+                throw new RuntimeException("Failed to fetch product: " + productId, e);
+            }
+
+            productCost = productCost.add(price.multiply(BigDecimal.valueOf(quantity)));
+        }
+
+        log.info("Calculated total product cost: {}", productCost);
+        return productCost;
     }
 
     @Override
