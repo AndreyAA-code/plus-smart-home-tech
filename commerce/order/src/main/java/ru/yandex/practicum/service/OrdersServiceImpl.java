@@ -108,14 +108,15 @@ public class OrdersServiceImpl implements OrdersService {
         AssemblyProductsForOrderRequest assemblyRequest
                 = new AssemblyProductsForOrderRequest(orders.getProducts(),orderId);
         warehouseFeignClient.assemblyProducts(assemblyRequest);
-
-
-        return null;
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override
     public OrdersDto paymentFailed(UUID orderId) {
-        return null;
+        log.info("Payment failed order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        orders = changeOrdersState(orders, OrdersState.PAYMENT_FAILED);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override
@@ -145,12 +146,18 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public OrdersDto assembly(UUID orderId) {
-        return null;
+        log.info("Assembling order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        orders = changeOrdersState(orders, OrdersState.ASSEMBLED);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override
     public OrdersDto assemblyFailed(UUID orderId) {
-        return null;
+        log.info("Assembling failed order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        orders = changeOrdersState(orders, OrdersState.ASSEMBLY_FAILED);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     private void checkUser(String username) {
