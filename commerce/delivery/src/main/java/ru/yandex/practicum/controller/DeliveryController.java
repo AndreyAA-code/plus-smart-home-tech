@@ -44,8 +44,8 @@ public class DeliveryController implements DeliveryFeignClient {
     }
 
     @Override
-    public BigDecimal cost(OrdersDto orderDto) {
+    public BigDecimal deliveryCost(OrdersDto orderDto) {
         log.info("Cost of delivery: {}", orderDto);
-        return deliveryService.cost(orderDto);
+        return deliveryService.deliveryCost(orderDto);
     }
 }

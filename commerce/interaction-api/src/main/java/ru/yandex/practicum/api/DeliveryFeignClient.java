@@ -27,6 +27,6 @@ public interface DeliveryFeignClient {
     void failed(@RequestBody @NotNull UUID orderId);
 
     @PostMapping("/cost")
-    BigDecimal cost(@RequestBody @NotNull OrdersDto orderDto);
+    BigDecimal deliveryCost(@RequestBody @NotNull OrdersDto orderDto);
 
 }

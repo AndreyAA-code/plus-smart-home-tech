@@ -58,7 +58,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public BigDecimal cost(OrdersDto orderDto) {
+    public BigDecimal deliveryCost(OrdersDto orderDto) {
         log.info("Order delivery cost {}", orderDto);
         Delivery delivery = deliveryRepository.findById(orderDto.getDeliveryId())
                 .orElseThrow(() -> new NoDeliveryFoundException ("delivery not found"));

@@ -23,7 +23,7 @@ BigDecimal getTotalCost(@RequestBody @Valid OrdersDto orderDto);
 void paymentRefunded(@RequestBody UUID paymentId);
 
 @PostMapping ("/productCost")
-BigDecimal getProductCost(@RequestBody @Valid OrdersDto orderDto);
+BigDecimal productCost(@RequestBody @Valid OrdersDto orderDto);
 
 @PostMapping("/failed")
 void paymentFailed(@RequestBody UUID paymentId);

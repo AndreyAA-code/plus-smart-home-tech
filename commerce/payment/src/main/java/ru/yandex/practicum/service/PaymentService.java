@@ -14,7 +14,7 @@ public interface PaymentService {
 
     void paymentRefunded(UUID paymentId);
 
-    BigDecimal getProductCost(OrdersDto orderDto);
+    BigDecimal productCost(OrdersDto orderDto);
 
     void paymentFailed(UUID paymentId);
 }

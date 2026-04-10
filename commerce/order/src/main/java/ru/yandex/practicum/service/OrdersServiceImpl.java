@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.api.DeliveryFeignClient;
+import ru.yandex.practicum.api.PaymentFeignClient;
 import ru.yandex.practicum.api.WarehouseFeignClient;
 import ru.yandex.practicum.dto.delivery.DeliveryDto;
 import ru.yandex.practicum.dto.delivery.DeliveryState;
@@ -24,6 +25,7 @@ import ru.yandex.practicum.mapper.OrdersMapper;
 import ru.yandex.practicum.model.Orders;
 import ru.yandex.practicum.repository.OrdersRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +41,7 @@ public class OrdersServiceImpl implements OrdersService {
     private final OrdersMapper ordersMapper;
     private final WarehouseFeignClient warehouseFeignClient;
     private final DeliveryFeignClient deliveryFeignClient;
+    private final PaymentFeignClient paymentFeignClient;
 
     @Override
     public List<OrdersDto> getOrders(String username) {
@@ -121,17 +124,26 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public OrdersDto delivery(UUID orderId) {
-        return null;
+        log.info("Delivery order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        orders = changeOrdersState(orders, OrdersState.DELIVERED);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override
     public OrdersDto deliveryFailed(UUID orderId) {
-        return null;
+        log.info("Delivery failed order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        orders = changeOrdersState(orders, OrdersState.DELIVERY_FAILED);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override
     public OrdersDto complete(UUID orderId) {
-        return null;
+        log.info("Complete order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        orders = changeOrdersState(orders, OrdersState.COMPLETED);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override
@@ -141,7 +153,15 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public OrdersDto calculateDeliveryCost(UUID orderId) {
-        return null;
+        log.info("Calculate delivery cost for order {}", orderId);
+        Orders orders = getOrdersById(orderId);
+        BigDecimal productCost = paymentFeignClient.productCost(ordersMapper.toOrdersDto(orders));
+        orders.setProductPrice(productCost);
+        BigDecimal deliveryCost = deliveryFeignClient.deliveryCost(ordersMapper.toOrdersDto(orders));
+        orders.setDeliveryPrice(deliveryCost);
+
+        orders = ordersRepository.save(orders);
+        return ordersMapper.toOrdersDto(orders);
     }
 
     @Override

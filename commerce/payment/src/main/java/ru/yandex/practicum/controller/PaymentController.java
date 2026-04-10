@@ -38,9 +38,9 @@ public class PaymentController implements PaymentFeignClient {
     }
 
     @Override
-    public BigDecimal getProductCost(OrdersDto orderDto) {
+    public BigDecimal productCost(OrdersDto orderDto) {
         log.info("Get Product cost");
-        return paymentService.getProductCost(orderDto);
+        return paymentService.productCost(orderDto);
     }
 
     @Override

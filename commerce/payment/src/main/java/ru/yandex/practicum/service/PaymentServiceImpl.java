@@ -22,6 +22,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentDto createPayment(OrdersDto orderDto) {
+        log.info("Create payment {}", orderDto);
+
         return null;
     }
 
@@ -36,7 +38,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public BigDecimal getProductCost(OrdersDto orderDto) {
+    public BigDecimal productCost(OrdersDto orderDto) {
+
         return null;
     }
 
