@@ -140,7 +140,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         warehouseRepository.saveAll(productsToUpdate);
         log.info("Products assembled at warehouse");
 
-        log.info("Возвращаем параметры заказа: {}", bookedProducts);
         return bookedProducts;
     }
 
