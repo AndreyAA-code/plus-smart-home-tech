@@ -32,7 +32,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public void newProductInWarehouse(NewProductInWarehouseRequest request) {
-        log.debug("Добавляем новый товар в перечень - {}", request);
+        log.info("Add new product to warehousee");
         warehouseRepository.findById(request.getProductId())
                 .ifPresent(product -> {
                     log.warn("Product with ID: {} already exists", request.getProductId());
