@@ -12,6 +12,7 @@ import ru.yandex.practicum.exception.NoProductsInOrderException;
 import ru.yandex.practicum.exception.NotEnoughInfoInOrderToCalculateException;
 import ru.yandex.practicum.exception.ProductNotFoundException;
 import ru.yandex.practicum.mapper.PaymentMapper;
+import ru.yandex.practicum.model.Payment;
 import ru.yandex.practicum.repository.PaymentRepository;
 
 import java.math.BigDecimal;
@@ -32,7 +33,17 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDto createPayment(OrdersDto orderDto) {
         log.info("Create payment {}", orderDto);
-        return null;
+        BigDecimal productCost = orderDto.getProductPrice();
+        BigDecimal deliveryTotal = orderDto.getDeliveryPrice();
+        BigDecimal totalCost = orderDto.getTotalPrice();
+        if (productCost == null || deliveryTotal == null || totalCost == null) {
+            throw new NotEnoughInfoInOrderToCalculateException("Not enough info in order to calculate payment");
+        }
+        BigDecimal feeTotal = productCost.multiply(VAT);
+        Payment payment = paymentMapper.toPayment(orderDto, feeTotal);
+        payment = paymentRepository.save(payment);
+        log.info("Payment {}", payment);
+        return paymentMapper.toPaymentDto(payment);
     }
 
     @Override
@@ -41,7 +52,7 @@ public class PaymentServiceImpl implements PaymentService {
         BigDecimal productCost = orderDto.getProductPrice();
         BigDecimal deliveryTotal = orderDto.getDeliveryPrice();
         if (productCost == null || deliveryTotal == null) {
-            throw new NotEnoughInfoInOrderToCalculateException("Not enough info in order");
+            throw new NotEnoughInfoInOrderToCalculateException("Not enough info in order to calculate payment");
         }
         BigDecimal feeTotal = productCost.multiply(VAT);
         BigDecimal totalCost = productCost.add(feeTotal).add(deliveryTotal);
