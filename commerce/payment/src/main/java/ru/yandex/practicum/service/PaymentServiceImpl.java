@@ -9,6 +9,7 @@ import ru.yandex.practicum.api.ShoppingStoreFeignClient;
 import ru.yandex.practicum.dto.order.OrdersDto;
 import ru.yandex.practicum.dto.payment.PaymentDto;
 import ru.yandex.practicum.exception.NoProductsInOrderException;
+import ru.yandex.practicum.exception.NotEnoughInfoInOrderToCalculateException;
 import ru.yandex.practicum.exception.ProductNotFoundException;
 import ru.yandex.practicum.mapper.PaymentMapper;
 import ru.yandex.practicum.repository.PaymentRepository;
@@ -25,6 +26,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final ShoppingStoreFeignClient shoppingStoreFeignClient;
+    private static final BigDecimal VAT = BigDecimal.valueOf(0.1);
+
 
     @Override
     public PaymentDto createPayment(OrdersDto orderDto) {
@@ -35,7 +38,15 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public BigDecimal getTotalCost(OrdersDto orderDto) {
         log.info("Get total cost {}", orderDto);
-        return null;
+        BigDecimal productCost = orderDto.getProductPrice();
+        BigDecimal deliveryTotal = orderDto.getDeliveryPrice();
+        if (productCost == null || deliveryTotal == null) {
+            throw new NotEnoughInfoInOrderToCalculateException("Not enough info in order");
+        }
+        BigDecimal feeTotal = productCost.multiply(VAT);
+        BigDecimal totalCost = productCost.add(feeTotal).add(deliveryTotal);
+        log.info("Total cost {}", totalCost);
+        return totalCost;
     }
 
     @Override
