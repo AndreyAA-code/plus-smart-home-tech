@@ -9,6 +9,5 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 public class ScenarioAnalyzer {
     public void analyze(SensorsSnapshotAvro snapshot) {
         log.info("Анализ снапшота для хаба: {}", snapshot.getHubId());
-        // TODO: реализовать анализ сценариев
     }
 }
