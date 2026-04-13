@@ -117,7 +117,7 @@ public class EventDataProducer {
                 for (int i = 0; i < Math.min(bytes.length, 100); i++) {
                     sb.append(String.format("%02X ", bytes[i]));
                 }
-                log.error("Первые 100 байт: {}", sb.toString());
+                log.error("Первые 100 байт: {}", sb);
             } catch (Exception ex) {
                 log.error("Не удалось получить байты");
             }

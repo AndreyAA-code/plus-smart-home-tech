@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.api.WarehouseFeignClient;
 import ru.yandex.practicum.dto.cart.ShoppingCartDto;
-import ru.yandex.practicum.dto.warehouse.AddProductToWarehouseRequest;
-import ru.yandex.practicum.dto.warehouse.AddressDto;
-import ru.yandex.practicum.dto.warehouse.BookedProductsDto;
-import ru.yandex.practicum.dto.warehouse.NewProductInWarehouseRequest;
+import ru.yandex.practicum.dto.warehouse.*;
 import ru.yandex.practicum.service.WarehouseService;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -39,6 +39,18 @@ public class WarehouseController implements WarehouseFeignClient {
         log.info("Add product to warehouse request {}", request);
         warehouseService.addProductToWarehouse(request);
         log.info("Product added", request);
+    }
+
+    @Override
+    public void returnProducts(Map<UUID, Integer> returnProducts) {
+        log.info("Return product in warehouse request {}", returnProducts);
+        warehouseService.returnProductToWarehouse(returnProducts);
+    }
+
+    @Override
+    public BookedProductsDto assemblyProducts( AssemblyProductsForOrderRequest request) {
+        log.info("Assembly product in warehouse request {}", request);
+        return warehouseService.assemblyProducts(request);
     }
 
     @Override

@@ -11,6 +11,10 @@
 
     <artifactId>infra</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>gateway</module>
+    </modules>
+
     <build>
         <pluginManagement>
             <plugins>
